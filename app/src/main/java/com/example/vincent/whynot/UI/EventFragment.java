@@ -27,7 +27,7 @@ import com.example.vincent.whynot.UI.dummy.DummyContent;
  */
 public class EventFragment extends Fragment implements AbsListView.OnItemClickListener {
 
-    //test change
+    //test change again
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
