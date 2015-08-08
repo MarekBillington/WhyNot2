@@ -11,10 +11,12 @@ import android.view.MenuItem;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 
+import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
 
     public Application app;
+    public App applicationData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends FragmentActivity {
             System.out.println("debug ");
         }
 
+        applicationData = new App();
     }
 
 
@@ -70,4 +73,14 @@ public class MainActivity extends FragmentActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public ArrayList<Event> getEventList(){
+        return applicationData.getEventList();
+    }
+
+    public void updateEventList(ArrayList<Event> eventArrayList){
+        applicationData.updateEventList(eventArrayList);
+    }
+
+
 }
