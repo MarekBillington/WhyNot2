@@ -10,14 +10,14 @@ import java.util.Date;
 public class Event {
     private String title;
     private String description;
-    private Date startDate, endDate;
+    private String startDate, endDate;
     private double latitude, longitude;
     private double price;
     private int ageRestriction;
     private String link;
     private Image image;
 
-    public Event(String title, String description, Date startDate, Date endDate, double latitude, double longitude, double price, int ageRestriction, String link, Image image) {
+    public Event(String title, String description, String startDate, String endDate, double latitude, double longitude, double price, int ageRestriction, String link, Image image) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
@@ -28,6 +28,17 @@ public class Event {
         this.ageRestriction = ageRestriction;
         this.link = link;
         this.image = image;
+    }
+
+    public String getOverview(){
+        String nl = System.getProperty("line.separator");
+        String output = "\n" + this.description + "\n\n";
+        output += "$" + this.price + " per person.\n";
+
+        if(ageRestriction > 0) output += "Minimum age: " + this.ageRestriction + "\n";
+
+        output += this.link + "\n";
+        return output;
     }
 
     public String getTitle() {
@@ -46,19 +57,19 @@ public class Event {
         this.description = description;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

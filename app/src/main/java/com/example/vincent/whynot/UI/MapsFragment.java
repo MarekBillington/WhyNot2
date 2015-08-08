@@ -1,13 +1,17 @@
 package com.example.vincent.whynot.UI;
 
+import android.app.Application;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -25,17 +29,18 @@ public class MapsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_maps, container, false);
         setUpMapIfNeeded();
 
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return view;
     }
 
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            
-            //((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(onMapReadyCallback);
+
+            ((SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(onMapReadyCallback);
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
@@ -61,6 +66,15 @@ public class MapsFragment extends Fragment {
         mMap.addMarker(new MarkerOptions().position(new LatLng(-36.861964, 174.757032)).title("Marker"));
         mMap.setMyLocationEnabled(true);
 
+        placeMarkers();
+
+    }
+
+    private void placeMarkers(){
+        App app = (App) getActivity().getApplication();
+        for(Event e: app.getEvents()){
+            mMap.addMarker(new MarkerOptions().position(new LatLng(e.getLatitude(), e.getLongitude())).title(e.getTitle()));
+        }
     }
 
     public MapsFragment() {
