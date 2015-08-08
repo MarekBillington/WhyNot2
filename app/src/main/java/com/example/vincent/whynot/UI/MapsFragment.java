@@ -21,11 +21,21 @@ public class MapsFragment extends Fragment {
 
     private GoogleMap mMap;
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        setUpMapIfNeeded();
+
+        return inflater.inflate(R.layout.fragment_main, container, false);
+    }
+
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(onMapReadyCallback);
+            
+            //((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(onMapReadyCallback);
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
@@ -56,9 +66,4 @@ public class MapsFragment extends Fragment {
     public MapsFragment() {
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
-    }
 }
