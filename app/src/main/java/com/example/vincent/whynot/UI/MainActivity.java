@@ -1,5 +1,7 @@
 package com.example.vincent.whynot.UI;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 
 
@@ -15,6 +17,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
@@ -49,8 +54,6 @@ public class MainActivity extends FragmentActivity {
 
         // Creating The Toolbar and setting it as the Toolbar for the activity
 
-        //toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        //setSupportActionBar(toolbar);
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
@@ -75,21 +78,18 @@ public class MainActivity extends FragmentActivity {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-
-
-
         app = getApplication();
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
 
-        applicationData = new App();
+        applicationData = new App(getApplicationContext(), this);
 
 
-        App.events.add(new Event("Test", "Test", "", "", -36.861764, 174.787134, 10, 18, "www.google.com", null));
-        App.events.add(new Event("Test", "Test", "", "", -36.862162, 174.727437, 10, -1, "www.google.com",null));
-        App.events.add(new Event("Test", "Test", "", "", -36.863668, 174.747231, 10, -1, "www.google.com",null));
-        App.events.add(new Event("Lantern Festival", "What a great event, definitely go here", "", "", -36.871569, 174.767090, 10, -1, "www.google.com",null));
+        //App.events.add(new Event("Christmas parade", "Carols, Santa and all that jazz", "", "", -36.861764, 174.787134, 10, 18, "https://www.facebook.com", null));
+        //App.events.add(new Event("Mexican fiesta", "Para todos que quieren festejar toda la noche", "", "", -36.862162, 174.727437, 10, -1, "https://www.google.com",null));
+        //App.events.add(new Event("Food parade", "Eat and eat until you feel horrible!", "", "", -36.863668, 174.747231, 10, -1, "https://www.google.com",null));
+        //App.events.add(new Event("Lantern Festival", "What a great event, definitely go here", "", "", -36.871569, 174.767090, 10, -1, "https://www.google.com",null));
     }
 
 
@@ -116,9 +116,42 @@ public class MainActivity extends FragmentActivity {
     }
 
 
+    public void updateFromEvents(App app){
+        //applicationData.getEvents();
+        System.out.println("empoty");
+        for(Event e: app.getEventsArray())
+            System.out.println("testing " + e.getName());
+
+        adapter.getMapsFragment().placeMarkers(app);
+        adapter.getListFragment().updateList(app);
+    }
+
+    public void expandCard(View view){
+
+
+
+        View parent = (ViewGroup)view.getParent();
+        TextView textView = (TextView) parent.findViewById(R.id.event_description);
+        if(textView.isShown()){
+            com.example.vincent.whynot.UI.Fx.slide_up(this, textView);
+            textView.setVisibility(View.GONE);
+        }
+        else{
+            com.example.vincent.whynot.UI.Fx.slide_down(this, textView);
+            textView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void startSMS(View view){
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:"));
+        sendIntent.putExtra("sms_body", "Let's go to this thing later bro?");
+        startActivity(sendIntent);
+    }
 
     public ArrayList<Event> getEventList(){
-        return applicationData.getEvents();
+        return applicationData.getEventsArray();
     }
 
 //    public void updateEventList(ArrayList<Event> eventArrayList){

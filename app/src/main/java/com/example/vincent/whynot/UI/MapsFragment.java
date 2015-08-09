@@ -72,8 +72,8 @@ public class MapsFragment extends Fragment {
 
     private void placeMarkers(){
         App app = (App) getActivity().getApplication();
-        for(Event e: app.getEvents()){
-            mMap.addMarker(new MarkerOptions().position(new LatLng(e.getLatitude(), e.getLongitude())).title(e.getTitle()));
+        for(Event e: app.getEventsArray()){
+            mMap.addMarker(new MarkerOptions().position(new LatLng(e.getLatitude(), e.getLongitude())).title(e.getName()));
         }
     }
 

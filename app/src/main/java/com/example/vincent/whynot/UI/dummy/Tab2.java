@@ -4,20 +4,24 @@ package com.example.vincent.whynot.UI.dummy;
  * Created by George on 8/8/2015.
  */
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -95,7 +99,7 @@ public class Tab2 extends SupportMapFragment {
         mMap.setMyLocationEnabled(true);
 
         centreMapOnUser();
-        placeMarkers();
+        //placeMarkers(app);
 
         mMap.setOnMarkerClickListener(
                 new GoogleMap.OnMarkerClickListener() {
@@ -103,9 +107,22 @@ public class Tab2 extends SupportMapFragment {
 
                     public boolean onMarkerClick(Marker marker) {
                         marker.showInfoWindow();
+
                         return doNotMoveCameraToCenterMarker;
                     }
                 });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            final Context context = getActivity().getApplicationContext();
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+//                Intent viewIntent = new Intent(Intent.ACTION_VIEW,
+//                        Uri.parse(marker.getSnippet().split("%")[1]));
+//                viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(viewIntent);
+            }
+        });
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             public View getInfoWindow(Marker arg0) {
@@ -114,12 +131,16 @@ public class Tab2 extends SupportMapFragment {
 
             public View getInfoContents(Marker marker) {
 
-                Context context = getActivity().getApplicationContext(); //or getActivity(), YourActivity.this, etc.
+                final Context context = getActivity().getApplicationContext(); //or getActivity(), YourActivity.this, etc.
 
                 LinearLayout info = new LinearLayout(context);
                 info.setOrientation(LinearLayout.VERTICAL);
 
+                String description = marker.getSnippet().split("%")[0];
+                //String url = marker.getSnippet().split("%")[1];
+
                 TextView title = new TextView(context);
+                title.setPadding(8,8,8,8);
                 title.setTextColor(Color.BLACK);
                 title.setGravity(Gravity.CENTER);
                 title.setTypeface(null, Typeface.BOLD);
@@ -129,10 +150,30 @@ public class Tab2 extends SupportMapFragment {
                 //snippet.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 snippet.setGravity(Gravity.CENTER);
                 snippet.setTextColor(Color.GRAY);
-                snippet.setText(marker.getSnippet());
+                snippet.setText(description);
+
+                Button openSite = new Button(context);
+                openSite.setText("Open site");
+                openSite.setClickable(true);
+                openSite.setEnabled(true);
+
+                info.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//
+//                        try {
+//                            Intent viewIntent = new Intent("Intent.ACTION_VIEW",
+//                                    Uri.parse("http://www.google.com"));
+//                            context.startActivity(viewIntent);
+//                        } catch (Exception e) {
+//                            Log.e("CC", e.getMessage());
+//                        }
+                    }
+                });
 
                 info.addView(title);
                 info.addView(snippet);
+                info.addView(openSite);
 
                 return info;
             }
@@ -140,12 +181,12 @@ public class Tab2 extends SupportMapFragment {
 
     }
 
-    public void placeMarkers(){
+    public void placeMarkers(App app){
 
-       for(Event e: App.events) {
+       for(Event e: app.getEventsArray()) {
            mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(e.getLatitude(), e.getLongitude()))
-                    .title(e.getTitle())
+                    .title(e.getName())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.eventicon)))
                     .setSnippet(e.getOverview());
                     //.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.eventicon));
@@ -166,7 +207,7 @@ public class Tab2 extends SupportMapFragment {
             myLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 13));
     }
 
 }

@@ -23,4 +23,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.pnikosis:materialish-progress:1.5'
+
+    compile 'com.android.support:recyclerview-v7:21.0.0'
+    compile 'com.android.support:support-v4:22.+'
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
+
 }
