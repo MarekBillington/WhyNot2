@@ -7,9 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.vincent.whynot.App;
-import com.example.vincent.whynot.UI.SplashFragment;
-
 /**
  * Created by hp1 on 21-01-2015.
  */
@@ -17,7 +14,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
-    private Tab2 mapsFragment;
+    private MapsFragment mapsFragment;
     private Tab1 listFragment;
 
 
@@ -45,10 +42,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         }
         else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            Tab2 tab2 = new Tab2();
-            tab2.setUpMapIfNeeded();
-            mapsFragment = tab2;
-            return tab2;
+            MapsFragment mapsFragment = new MapsFragment();
+            mapsFragment.setUpMapIfNeeded();
+            this.mapsFragment = mapsFragment;
+            return mapsFragment;
         }
 
 
@@ -68,7 +65,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         return NumbOfTabs;
     }
 
-    public Tab2 getMapsFragment() {
+    public MapsFragment getMapsFragment() {
         return mapsFragment;
     }
     public Tab1 getListFragment() {
@@ -76,7 +73,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
 
-    public void setMapsFragment(Tab2 mapsFragment) {
+    public void setMapsFragment(MapsFragment mapsFragment) {
         this.mapsFragment = mapsFragment;
     }
 }

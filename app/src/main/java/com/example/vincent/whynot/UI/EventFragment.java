@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.vincent.whynot.R;
 
-import com.example.vincent.whynot.UI.dummy.DummyContent;
 
 import java.util.ArrayList;
 
