@@ -22,10 +22,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-/**
- * Created by Vincent on 8/08/2015.
- */
+import com.example.vincent.whynot.UI.Event;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+
 public class App extends Application{
+
 
     public static App app;
 
@@ -47,6 +51,7 @@ public class App extends Application{
         myContext = context;
         getEventsDataHTTPRequest();
         getUserLocationFromGPS();
+
     }
 
     @Override

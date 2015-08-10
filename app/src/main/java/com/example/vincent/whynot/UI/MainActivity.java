@@ -115,7 +115,6 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public void updateFromEvents(App app){
         //applicationData.getEvents();
         System.out.println("empoty");
@@ -157,6 +156,7 @@ public class MainActivity extends FragmentActivity {
 //    public void updateEventList(ArrayList<Event> eventArrayList){
 //        applicationData.updateEventList(eventArrayList);
 //    }
+
 
 
 }
