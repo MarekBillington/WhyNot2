@@ -43,6 +43,7 @@
             android:padding="4dp"
             />
     </RelativeLayout>
+
     <ImageView
         android:layout_below="@id/banner"
         android:layout_marginLeft="10dp"
@@ -85,6 +86,5 @@
         android:layout_below="@+id/banner"
         android:id="@+id/event_description"
         android:paddingBottom="16dp"/>
-
 
 </RelativeLayout>

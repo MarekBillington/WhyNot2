@@ -119,7 +119,7 @@ public class MapsFragment extends SupportMapFragment {
 
                 //Button is only rendered and is non-functional
                 Button openSite = new Button(context);
-                openSite.setText("Open site");
+                openSite.setText("Visit site");
 
                 info.addView(title);
                 info.addView(snippet);

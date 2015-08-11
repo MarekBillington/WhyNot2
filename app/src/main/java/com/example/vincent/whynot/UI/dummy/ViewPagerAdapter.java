@@ -12,8 +12,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+    private CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+    private int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+
+    /** The 2 fragment are stored as variables, to be referred to later. **/
     private MapsFragment mapsFragment;
     private Tab1 listFragment;
 
@@ -34,9 +36,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         if(position == 0) // if the position is 0 we are returning the First tab
         {
             Tab1 tab1;
+            // The splash screen will be implemented later
             //if(App.events.isEmpty()) tab1 = new SplashFragment();
             //else
-                tab1 = new Tab1();
+            tab1 = new Tab1();
             listFragment = tab1;
             return tab1;
         }
