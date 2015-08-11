@@ -1,107 +1,98 @@
 package com.example.vincent.whynot;
 
-import android.app.Activity;
+
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
+
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 
 import com.example.vincent.whynot.Backend.ConnectToRESTAsyncTask;
 import com.example.vincent.whynot.Backend.LocationManagerAsyncTask;
 import com.example.vincent.whynot.Backend.XMLParserAsyncTask;
 import com.example.vincent.whynot.UI.Event;
 import com.example.vincent.whynot.UI.MainActivity;
-import com.google.android.gms.maps.GoogleMap;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
-import com.example.vincent.whynot.UI.Event;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 
 public class App extends Application{
 
-
     public static App app;
-
-
     public MainActivity myActivity;
     private Context myContext;
-    private String eventString;
-
     private Location userLocation;
     private static ArrayList<Event> eventsArray;
     public static double radiusLength = 100000;
-    private final String username = "whynot";
-    private final String password = "kd87ymx3txqv";
+    private final String eventFindaAPIUsername = "whynot";
+    private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
 
     public App(Context context, MainActivity mainActivity) {
         super.onCreate();
+
+        // Holds reference to front end Main Activity to allow callback functions
         myActivity = mainActivity;
+        // Holds reference to Applications overall context
         myContext = context;
-        getEventsDataHTTPRequest();
+        // Set the overall HTTP Authentication credentials
+        setEventFindaAPIAuthentication();
+        // Begin the chain of async tasks that will eventually
+        // return the array of events to this App class
+        startAsyncTaskChain();
+
+    }
+
+    // Set the global authentication credentials
+    private void setEventFindaAPIAuthentication() {
+        Authenticator.setDefault(new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(eventFindaAPIUsername,
+                        eventFindaAPIPassword.toCharArray());
+            }
+        });
+    }
+
+    // begin the async task chain that will end with building the events array
+    private void startAsyncTaskChain() {
+        // Initial async task that finds out where the user is located,
+        // additional async task for requesting the data and parsing
+        // the returned xml file are initialised within each preceding
+        // async task in a chain like format
         getUserLocationFromGPS();
-
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    // Functions for creating and executing relevant async tasks,
+
+    // Get user location async task, called in the App constructor
+    private void getUserLocationFromGPS() {
+        // creates and begins a new async task that assigns the user's current
+        // location to this App instances userLocation attribute
+        LocationManager locationManager =
+                (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
+        LocationManagerAsyncTask locationManagerAsyncTask =
+                new LocationManagerAsyncTask(this, locationManager);
+        locationManagerAsyncTask.execute();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    // Get events data string from eventfinda, called from
+    // the LocationManagerAsyncTask onPostExecute() method
+    public void getEventsStringHTTPRequest() {
+        ConnectToRESTAsyncTask httpRequest = new ConnectToRESTAsyncTask(this);
+        httpRequest.execute();
     }
 
-
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-    }
-
-    public void getEventsNodeList(String xmlString) {
+    // Build the events array from the string returned by
+    // the http request, called in the ConnectToRESTAsyncTask onPostExecute() method
+    public void getEventsArrayFromString(String xmlString) {
         XMLParserAsyncTask xmlParser = new XMLParserAsyncTask(this, xmlString);
         xmlParser.execute();
     }
 
-    private void getEventsDataHTTPRequest() {
-
-        Authenticator.setDefault(new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password.toCharArray());
-            }
-        });
-        System.out.println("building async task");
-        ConnectToRESTAsyncTask httpRequest = new ConnectToRESTAsyncTask(this, this);
-        httpRequest.execute();
-    }
-
-    public void setEventsString(String eventString) {
-        this.eventString = eventString;
-    }
-
-    private void getUserLocationFromGPS() {
-        LocationManager locationManager = (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
-        LocationManagerAsyncTask locationManagerAsyncTask = new LocationManagerAsyncTask(this, locationManager);
-        locationManagerAsyncTask.execute();
-    }
+    // Class property setters and getters
 
     public void setUserLocation(Location newLocation) {
         this.userLocation = newLocation;
@@ -119,12 +110,5 @@ public class App extends Application{
         return eventsArray;
     }
 
-    public String getEndDateTimeString() {
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-        GregorianCalendar calendar = new GregorianCalendar();
-        String dateString = date_format.format(calendar.getTime());
-        String endDateTimeString = dateString + "%2023:59:59";
-        System.out.println("End date time string = " + endDateTimeString);
-        return endDateTimeString;
-    }
+
 }

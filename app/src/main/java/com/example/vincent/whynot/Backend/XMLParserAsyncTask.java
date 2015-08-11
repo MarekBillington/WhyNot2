@@ -32,11 +32,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         this.eventsString = eventsString;
     }
 
-    @Override
-    protected void onPreExecute() {
-        // TODO Auto-generated method stub
-        super.onPreExecute();
-    }
+    // Overridden class functions
 
     @Override
     protected String doInBackground(Void... params) {
@@ -44,51 +40,65 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         return "";
     }
 
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        myApp.myActivity.updateFromEvents(myApp);
+    }
 
+    // Helper functions
 
-    public void buildXMLFile(String xmlString) {
+    private void buildXMLFile(String xmlString) {
 
-        System.out.println("Starting tyo build xml doc");
         try {
+
             DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
             DocumentBuilder b = f.newDocumentBuilder();
             Document doc = b.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
             NodeList events = doc.getElementsByTagName("event");
-            Event eventobj;
-            for(int i = 0; i < events.getLength(); i++)
-            {
-                eventobj = new Event(myApp);
-                System.out.println("Starting for loop");
-                Element event = (Element) events.item(i);
-                Node id = event.getElementsByTagName("id").item(0);
-                eventobj.setId(id.getTextContent());
-                Node name = event.getElementsByTagName("name").item(0);
-                eventobj.setName(name.getTextContent());
-                System.out.println("Name node = " + name);
 
-                System.out.println("Name = " + name.getTextContent());
+            for(int i = 0; i < events.getLength(); i++) {
+
+                Event eventObject = new Event(myApp);
+                Element event = (Element) events.item(i);
+
+                Node id = event.getElementsByTagName("id").item(0);
+                eventObject.setId(id.getTextContent());
+
+                Node name = event.getElementsByTagName("name").item(0);
+                eventObject.setName(name.getTextContent());
+
                 Node desc = event.getElementsByTagName("description").item(0);
-                eventobj.setDescription(desc.getTextContent());
+                eventObject.setDescription(desc.getTextContent());
+
                 Node dt_start = event.getElementsByTagName("datetime_start").item(0);
-                eventobj.setDt_start(dt_start.getTextContent());
+                eventObject.setDt_start(dt_start.getTextContent());
+
+                Node dt_end = event.getElementsByTagName("datetime_end").item(0);
+                System.out.println("Testing: end date = " + dt_end.getTextContent());
+
                 Node web = event.getElementsByTagName("url").item(0);
-                eventobj.setWebpage(web.getTextContent());
+                eventObject.setWebpage(web.getTextContent());
+
                 Node loc = event.getElementsByTagName("location_summary").item(0);
-                eventobj.setLocation(loc.getTextContent());
+                eventObject.setLocation(loc.getTextContent());
+
                 Element point = (Element)event.getElementsByTagName("point").item(0);
                 Node lat = point.getElementsByTagName("lat").item(0);
-                eventobj.setLatitude(Float.parseFloat(lat.getTextContent()));
+                eventObject.setLatitude(Float.parseFloat(lat.getTextContent()));
+
                 Node lng = point.getElementsByTagName("lng").item(0);
-                eventobj.setLongitude(Float.parseFloat(lng.getTextContent()));
+                eventObject.setLongitude(Float.parseFloat(lng.getTextContent()));
                 Node free = event.getElementsByTagName("is_free").item(0);
 
-                if(free.getTextContent() == "0")
-                {
+                if (free.getTextContent() == "0") {
+
                     ArrayList<String> prices = new ArrayList<>();
                     Element ticket_types = (Element)event.getElementsByTagName("ticket_types").item(0);
                     NodeList t_types = ticket_types.getElementsByTagName("ticket_type");
-                    for(int j = 0; j < t_types.getLength(); j++)
-                    {
+
+                    for(int j = 0; j < t_types.getLength(); j++) {
+
                         int pricePointer = 0;
                         Element ticket_type = (Element) t_types.item(j);
                         Node price = ticket_type.getElementsByTagName("price").item(0);
@@ -98,22 +108,28 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
 
                 Element all_img = (Element)event.getElementsByTagName("images").item(0);
                 NodeList images = all_img.getElementsByTagName("image");
+
                 for (int j = 0; j < images.getLength(); j++) {
+
                     Element img = (Element) images.item(j);
                     NodeList trans = img.getElementsByTagName("transform");
                     int imgpointer = 0;
                     for (int k = 0; k < trans.getLength(); k++) {
+
                         Element tran = (Element) trans.item(k);
                         Node width = tran.getElementsByTagName("width").item(0);
                         if(width.getTextContent() == "350") {
+
                             Node url = tran.getElementsByTagName("url").item(0);
-                            eventobj.setImgUrl(url.getTextContent());
+                            eventObject.setImgUrl(url.getTextContent());
                         }
                     }
                 }
-                if (eventobj.verifyEvent()) {
-                    myEvents.add(eventobj);
-                }
+
+                /*if (eventObject.verifyEvent()) {
+                    myEvents.add(eventObject);
+                }*/
+                myEvents.add(eventObject);
 
             }
         } catch (ParserConfigurationException pce) {
@@ -125,14 +141,14 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+
         myApp.setEventsArray(myEvents);
-        System.out.println("testing size" + myEvents.size());
+        System.out.println("Testing: Events array size = " + myEvents.size());
+        System.out.println("Testing: Events array = " + myEvents);
     }
 
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        myApp.myActivity.updateFromEvents(myApp);
+    private void buildEvent() {
+
     }
 
 }
