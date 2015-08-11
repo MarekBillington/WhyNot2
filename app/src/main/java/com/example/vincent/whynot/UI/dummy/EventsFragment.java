@@ -32,7 +32,7 @@ import java.util.Random;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class Tab1 extends Fragment {
+public class EventsFragment extends Fragment {
 
     float historicX = Float.NaN, historicY = Float.NaN;
     static final int DELTA = 50;

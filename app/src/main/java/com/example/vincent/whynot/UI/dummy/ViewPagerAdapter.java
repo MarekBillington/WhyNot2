@@ -17,7 +17,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     /** The 2 fragment are stored as variables, to be referred to later. **/
     private MapsFragment mapsFragment;
-    private Tab1 listFragment;
+    private EventsFragment listFragment;
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
@@ -35,11 +35,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if(position == 0) // if the position is 0 we are returning the First tab
         {
-            Tab1 tab1;
+            EventsFragment tab1;
             // The splash screen will be implemented later
             //if(App.events.isEmpty()) tab1 = new SplashFragment();
             //else
-            tab1 = new Tab1();
+            tab1 = new EventsFragment();
             listFragment = tab1;
             return tab1;
         }
@@ -71,7 +71,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public MapsFragment getMapsFragment() {
         return mapsFragment;
     }
-    public Tab1 getListFragment() {
+    public EventsFragment getListFragment() {
         return listFragment;
     }
 
