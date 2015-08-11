@@ -26,7 +26,7 @@ public class App extends Application{
     private Context myContext;
     private Location userLocation;
     private static ArrayList<Event> eventsArray;
-    public static double radiusLength = 100000;
+    public static double radiusLength = 80;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
@@ -110,5 +110,8 @@ public class App extends Application{
         return eventsArray;
     }
 
+    public double getRadiusLength() {
+        return radiusLength;
+    }
 
 }

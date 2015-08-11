@@ -1,19 +1,10 @@
 package com.example.vincent.whynot.UI;
 
-import android.location.Location;
-import android.media.Image;
-
 
 import com.example.vincent.whynot.App;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-/**
- * Created by Vincent on 8/08/2015.
- */
+
 public class Event {
     private App myApp;
     private String id;
@@ -30,6 +21,27 @@ public class Event {
     private String distanceTo;
     private String cheapest;
     private String webpage;
+
+
+    // New event constructor that initialises all values rather than using setters
+    // as Event objects are read only effectively. Yet to be used to build events, still
+    // using setters
+    public Event(App app, String id, String name, String description, String location,
+                 double latitude, double longitude, boolean free, String restrictions,
+                 String distanceTo, String cheapest, String webpage) {
+        this.myApp = app;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.free = free;
+        this.restrictions = restrictions;
+        this.distanceTo = distanceTo;
+        this.cheapest = cheapest;
+        this.webpage = webpage;
+    }
 
     public Event(App app) {
         myApp = app;
@@ -48,8 +60,13 @@ public class Event {
     }
 
     public void setDescription(String desc){
-        desc = desc.substring(9,desc.length()-1);
-        this.description = desc + "...";
+
+        if (desc.length() > 10) {
+            desc = desc.substring(9, desc.length() - 1);
+            this.description = desc + "...";
+        } else {
+            this.description = "No available description";
+        }
     }
 
     public void setDt_start(String dstart){
@@ -134,38 +151,8 @@ public class Event {
         return this.distanceTo ;
     }
 
-
     public void setDistance(String dist) {
         this.distanceTo = dist;
-    }
-
-    public boolean verifyLocation(){
-        Location userLocation = myApp.getUserLocation();
-        double userLat = userLocation.getLatitude();
-        double userLong = userLocation.getLongitude();
-        float[] results = {1};
-        userLocation.distanceBetween(userLat, userLong, this.latitude, this.longitude, results);
-        System.out.print("Distance to event = " + results[0]);
-        String dist = String.valueOf(results[0]);
-        setDistance(dist);
-        if (results[0] < myApp.radiusLength) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-
-    public boolean verifyEvent() {
-        if(getFree()) setCheapest("Free");
-        else setCheapest("Paid");
-
-        if (verifyLocation()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public String isItCheap() {

@@ -74,9 +74,6 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                 Node dt_start = event.getElementsByTagName("datetime_start").item(0);
                 eventObject.setDt_start(dt_start.getTextContent());
 
-                Node dt_end = event.getElementsByTagName("datetime_end").item(0);
-                System.out.println("Testing: end date = " + dt_end.getTextContent());
-
                 Node web = event.getElementsByTagName("url").item(0);
                 eventObject.setWebpage(web.getTextContent());
 
@@ -125,12 +122,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                         }
                     }
                 }
-
-                /*if (eventObject.verifyEvent()) {
-                    myEvents.add(eventObject);
-                }*/
                 myEvents.add(eventObject);
-
             }
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
@@ -145,10 +137,6 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         myApp.setEventsArray(myEvents);
         System.out.println("Testing: Events array size = " + myEvents.size());
         System.out.println("Testing: Events array = " + myEvents);
-    }
-
-    private void buildEvent() {
-
     }
 
 }
