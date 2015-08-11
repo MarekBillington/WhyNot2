@@ -3,12 +3,14 @@ package com.example.vincent.whynot.UI.dummy;
 /**
  * Created by George on 8/8/2015.
  */
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +42,7 @@ public class Tab1 extends Fragment {
     RelativeLayout banner;
 
     public static String colours[] = {"#FF3A3A", "#9737CC", "#f3E6BC","#59E734","#FFE23A","#2CC1C1"};
+    private Context context;
 
 
     @Override
@@ -48,10 +51,12 @@ public class Tab1 extends Fragment {
 
         this.inflater = inflater;
         this.layout = (LinearLayout) view.findViewById(R.id.tabLinearLayout);
-
+        this.context = view.getContext();
 
 
         //setUpSlider(view);
+
+
 
 
         return view;
@@ -97,14 +102,16 @@ public class Tab1 extends Fragment {
         distance = Math.round(distance);
         System.out.println("testing " + distance);
         String distanceString = distance + "";
-        event_distance.setText(distanceString +"km");
-        TextView event_description = (TextView) card.findViewById(R.id.event_description);
+        event_distance.setText(distanceString + "km");
+        final TextView event_description = (TextView) card.findViewById(R.id.event_description);
         event_description.setText(event.getDescription());
         TextView event_time = (TextView) card.findViewById(R.id.event_time);
         event_time.setText(event.getDt_start());
 
 
+
     }
+
 
 
 }
