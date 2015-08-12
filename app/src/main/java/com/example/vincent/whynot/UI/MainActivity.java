@@ -1,6 +1,7 @@
 package com.example.vincent.whynot.UI;
 
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 
@@ -45,7 +46,7 @@ public class MainActivity extends FragmentActivity {
         fragmentManager = getSupportFragmentManager();
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, TITLES fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(fragmentManager, TITLES, NUMBOFTABS);
+        adapter =  new ViewPagerAdapter(this,fragmentManager, TITLES, NUMBOFTABS);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -96,4 +97,9 @@ public class MainActivity extends FragmentActivity {
         startActivity(sendIntent);
     }
 
+    /** Switches to maps fragment and zooms on a particular location   **/
+    public void switchToMaps(Location location){
+        tabs.switchToTab(1);
+        adapter.getMapsFragment().centreMapOnLocation(location);
+    }
 }
