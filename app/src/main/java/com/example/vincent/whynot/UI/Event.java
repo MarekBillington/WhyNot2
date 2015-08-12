@@ -1,8 +1,17 @@
 package com.example.vincent.whynot.UI;
 
 
+import android.location.Location;
+
 import com.example.vincent.whynot.App;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class Event {
@@ -11,6 +20,7 @@ public class Event {
     private String name;
     private String description;
     private String dt_start;
+    private String endDate;
     private String location;
     private double latitude;
     private double longitude;
@@ -73,6 +83,10 @@ public class Event {
         this.dt_start = dstart;
     }
 
+    public void setEndDate(String endDateString) {
+        this.endDate = endDateString;
+    }
+
     public void setLocation(String loc){
         this.location = loc;
     }
@@ -129,6 +143,10 @@ public class Event {
         return this.dt_start;
     }
 
+    public String getEndDate() {
+        return this.endDate;
+    }
+
     public String getLocation(){
         return this.location;
     }
@@ -151,8 +169,13 @@ public class Event {
         return this.distanceTo ;
     }
 
-    public void setDistance(String dist) {
-        this.distanceTo = dist;
+    public void setDistance() {
+        Location userLocation = myApp.getUserLocation();
+        double userLat = userLocation.getLatitude();
+        double userLong = userLocation.getLongitude();
+        float[] results = {1};
+        userLocation.distanceBetween(userLat, userLong, this.latitude, this.longitude, results);
+        this.distanceTo = Float.toString(results[0]);
     }
 
     public String isItCheap() {
@@ -179,6 +202,49 @@ public class Event {
         }
 
         return cheap;
+    }
+
+    public boolean verifyDate() {
+        GregorianCalendar eventEndDate = new GregorianCalendar();
+        GregorianCalendar endOfToday = new GregorianCalendar();
+        endOfToday.set(Calendar.HOUR_OF_DAY, 23);
+        endOfToday.set(Calendar.MINUTE, 59);
+        endOfToday.set(Calendar.SECOND, 59);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = df.parse(endDate);
+            eventEndDate.setTime(date);
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+        long timeDifference = endOfToday.getTimeInMillis() - eventEndDate.getTimeInMillis();
+        if (timeDifference >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean verifyLocation(){
+        Location userLocation = myApp.getUserLocation();
+        double userLat = userLocation.getLatitude();
+        double userLong = userLocation.getLongitude();
+        float[] results = {1};
+        userLocation.distanceBetween(userLat, userLong, this.latitude, this.longitude, results);
+        String dist = String.valueOf(results[0]);
+        if (results[0] < myApp.radiusLength) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean verifySelf() {
+        if (verifyDate()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public String getOverview(){
