@@ -73,7 +73,7 @@ public class Event {
 
         if (desc.length() > 10) {
             desc = desc.substring(9, desc.length() - 1);
-            this.description = desc + "...";
+            this.description = desc;
         } else {
             this.description = "No available description";
         }
@@ -254,10 +254,16 @@ public class Event {
 
         //if(restriction > 0) output += "\nMinimum age: " + this.ageRestriction;
 
-        //output += "%" + this.link + "\n";
+        output += "%" + this.getWebpage() + "\n";
         return output;
     }
 
 
+    public String getImg_url() {
+        return img_url;
+    }
 
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
+    }
 }

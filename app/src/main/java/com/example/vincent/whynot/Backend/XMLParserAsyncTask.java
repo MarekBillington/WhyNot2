@@ -87,6 +87,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                 Node lng = point.getElementsByTagName("lng").item(0);
                 eventObject.setLongitude(Float.parseFloat(lng.getTextContent()));
                 Node free = event.getElementsByTagName("is_free").item(0);
+                eventObject.setFree(free.getTextContent());
 
                 if (free.getTextContent() == "0") {
 
@@ -115,10 +116,11 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
 
                         Element tran = (Element) trans.item(k);
                         Node width = tran.getElementsByTagName("width").item(0);
-                        if(width.getTextContent() == "350") {
+                        if(Integer.parseInt(width.getTextContent()) >= 500) {
 
                             Node url = tran.getElementsByTagName("url").item(0);
                             eventObject.setImgUrl(url.getTextContent());
+                            break;
                         }
                     }
                 }

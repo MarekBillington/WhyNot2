@@ -4,11 +4,13 @@ package com.example.vincent.whynot.UI.dummy;
  * Created by George on 8/8/2015.
  */
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -77,17 +79,17 @@ public class MapsFragment extends SupportMapFragment {
 //                    }
 //                });
 
-  //      mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//
-//            final Context context = getActivity().getApplicationContext();
-//            @Override
-//            public void onInfoWindowClick(Marker marker) {
-//                Intent viewIntent = new Intent(Intent.ACTION_VIEW,
-//                        Uri.parse(marker.getSnippet().split("%")[1]));
-//                viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                context.startActivity(viewIntent);
-//            }
-//        });
+      mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            final Context context = getActivity().getApplicationContext();
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(marker.getSnippet().split("%")[1]));
+                viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(viewIntent);
+            }
+        });
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             public View getInfoWindow(Marker arg0) {
@@ -143,7 +145,6 @@ public class MapsFragment extends SupportMapFragment {
        }
     }
 
-    //Focuses zoom on to user
     public void centreMapOnUser(){
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -157,6 +158,19 @@ public class MapsFragment extends SupportMapFragment {
                     location.getLongitude());
         }
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 13));
+    }
+
+    //Focuses zoom on to user
+
+    public void centreMapOnLocation(Location location){
+
+        LatLng myLocation = null;
+
+        if (location != null) {
+            myLocation = new LatLng(location.getLatitude(),
+                    location.getLongitude());
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16));
     }
 
 }

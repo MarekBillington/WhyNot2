@@ -69,15 +69,15 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         String results = "";
         // Try to establish URL connection with HttpURLConnection object
         try {
-            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=" +
-                    getEndDateTimeString() + "&offset=" + offset +
-                    "&point=-36.84846,174.763332&radius=" + myApp.getRadiusLength());
-            /*
+//            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=" +
+//                    getEndDateTimeString() + "&offset=" + offset +
+//                    "&point=-36.84846,174.763332&radius=" + myApp.getRadiusLength());
+
             URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=" +
                     getEndDateTimeString() + "&offset=" + offset +
                     "&point=" + getUserLocationCoordinateString() +
                     "&radius=" + myApp.getRadiusLength());
-            */
+
             System.out.println("Testing: URL = " + url);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Try to initialise a buffered input stream from the url connection,

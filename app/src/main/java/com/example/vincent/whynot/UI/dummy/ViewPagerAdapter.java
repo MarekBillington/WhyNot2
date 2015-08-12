@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.vincent.whynot.UI.MainActivity;
+
 /**
  * Created by hp1 on 21-01-2015.
  */
@@ -17,13 +19,15 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     /** The 2 fragment are stored as variables, to be referred to later. **/
     private MapsFragment mapsFragment;
+    private MainActivity mainActivity;
     private Tab1 listFragment;
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ViewPagerAdapter(MainActivity mainActivity,FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
 
+        this.mainActivity = mainActivity;
         this.Titles = mTitles;
         this.NumbOfTabs = mNumbOfTabsumb;
 
@@ -40,6 +44,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             //if(App.events.isEmpty()) tab1 = new SplashFragment();
             //else
             tab1 = new Tab1();
+            tab1.setMainActivity(mainActivity);
             listFragment = tab1;
             return tab1;
         }

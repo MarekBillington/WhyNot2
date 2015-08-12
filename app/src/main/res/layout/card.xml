@@ -51,7 +51,7 @@
         android:layout_height="25dp"
         android:layout_marginTop="16dp"
         android:id="@+id/imageView"
-        android:src="@drawable/arrow"></ImageView>
+        android:src="@drawable/ic_explore_black_24dp"></ImageView>
     <TextView
         android:id="@+id/event_distance"
         android:textSize="20sp"
@@ -60,7 +60,8 @@
         android:layout_marginLeft="40dp"
         android:text="100m"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+       />
 
 
     <ImageView
