@@ -49,7 +49,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             mapsFragment.setUpMapIfNeeded();
             this.mapsFragment = mapsFragment;
             return mapsFragment;
+
+
         }
+
 
 
     }

@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity {
 
     /** After events have been recieved, update both the list and maps fragments. **/
     public void updateFromEvents(App app){
-        adapter.getMapsFragment().placeMarkers(app);
+        //adapter.getMapsFragment().placeMarkers(app);
         adapter.getListFragment().updateList(app);
     }
 

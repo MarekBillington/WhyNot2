@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme" >
 
         <uses-library android:name="com.google.android.maps"/>
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDHVq6qwY-3EzawKV5SVrfV7vZe8zY4C_I"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBPXE2FVTz5lYY7Y4WxZrTgsQvcOOagUX4"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

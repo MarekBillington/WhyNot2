@@ -25,6 +25,7 @@ import com.daimajia.swipe.SwipeLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.Event;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -39,31 +40,31 @@ public class EventsFragment extends Fragment {
     enum Direction {LEFT, RIGHT;}
     LayoutInflater inflater;
     LinearLayout layout;
+    View view;
+    ViewGroup container;
+
     RelativeLayout banner;
 
     public static String colours[] = {"#FF3A3A", "#9737CC", "#f3E6BC","#59E734","#FFE23A","#2CC1C1"};
-    private Context context;
+    Context context;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =inflater.inflate(R.layout.tab_1,container,false);
 
+        this.view = inflater.inflate(R.layout.tab_1,container,false);
+        this.container = container;
         this.inflater = inflater;
         this.layout = (LinearLayout) view.findViewById(R.id.tabLinearLayout);
-        this.context = view.getContext();
-
-
-        //setUpSlider(view);
-
-
-
+        this.context = getActivity().getApplicationContext();
 
         return view;
     }
 
     public void updateList(App app){
+
         displaySurface(app.getEventsArray(), layout, inflater);
+
     }
 
 
@@ -76,6 +77,8 @@ public class EventsFragment extends Fragment {
             tabLinearLayout.addView(card);
             ((RelativeLayout) card.findViewById(R.id.banner)).setBackgroundColor(Color.parseColor(colours[i%6]));
         }
+
+
     }
 
     public void formatCard(View card){
@@ -98,9 +101,8 @@ public class EventsFragment extends Fragment {
         TextView event_name = (TextView) card.findViewById(R.id.event_name);
         event_name.setText(event.getName());
         TextView event_distance = (TextView) card.findViewById(R.id.event_distance);
-        float distance = Float.parseFloat(event.getDistance())/1000;
-        distance = Math.round(distance);
-        System.out.println("testing " + distance);
+        //float distance = Float.parseFloat(event.getDistance())/1000;
+        float distance = 4 /*Math.round(distance)*/;
         String distanceString = distance + "";
         event_distance.setText(distanceString + "km");
         final TextView event_description = (TextView) card.findViewById(R.id.event_description);
