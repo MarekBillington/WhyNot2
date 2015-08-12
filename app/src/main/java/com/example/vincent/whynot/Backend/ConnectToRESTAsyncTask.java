@@ -31,8 +31,6 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
 
     private App myApp;
     private int offset = 0;
-    private int eventsCount;
-    private int eventsPulled = 0;
 
     public ConnectToRESTAsyncTask(App app) {
         myApp = app;
@@ -43,13 +41,9 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
         String results = getDataStringFromURL();
-        eventsCount = getEventsCountFromXMLString(results);
-        /*offset += 20;
-        while (offset < eventsCount) {
-            System.out.println("Testing: events count = " + eventsCount + ", Offset = " + offset);
-            results += getDataStringFromURL();
-            offset += 20;
-        }*/
+        if (myApp.getEventsCount() == 0) {
+            myApp.setEventsCount(getEventsCountFromXMLString(results));
+        }
         return results;
     }
 
@@ -58,8 +52,6 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         super.onPostExecute(result);
         // Call the XMLParser async task and pass it the String retrieved from the url
         myApp.getEventsArrayFromString(result);
-        // reset the value of offset
-        offset = 0;
     }
 
     // Helper methods
@@ -70,12 +62,11 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         String results = "";
         // Try to establish URL connection with HttpURLConnection object
         try {
-//            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=" +
-//                    getEndDateTimeString() + "&offset=" + offset +
-//                    "&point=-36.84846,174.763332&radius=" + myApp.getRadiusLength());
+            /*URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=2015-08-12%2023:59:59" + "&offset=" + offset +
+                    "&point=-36.84846,174.763332&radius=" + myApp.getRadiusLength());*/
 
-            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=" +
-                    getEndDateTimeString() + "&offset=" + offset +
+            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date&rows=20&end_date=" +
+                    getEndDateTimeString() + "&offset=" + myApp.getOffset() +
                     "&point=" + getUserLocationCoordinateString() +
                     "&radius=" + myApp.getRadiusLength());
 
@@ -94,7 +85,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
             }
         // Deal with issues...
         } catch (MalformedURLException mue) {
-            System.out.println("Issue with URL");
+            System.out.println("Testing: Issue with URL");
             mue.printStackTrace();
         } catch (IOException ioe) {
             System.out.println("Issue with retrieving data from eventfinda");
@@ -102,7 +93,9 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
             ioe.printStackTrace();
         }
         // Pass the retrieved string to onPostExecute() method
-        System.out.println("Testing: String obtained from EventFinda API");
+        if (results.length() > 50) {
+            System.out.println("Testing: Data successfully obtained from EventFinda API");
+        }
         results = results.replaceAll("[^\\x20-\\x7e]", "");
         return results;
     }

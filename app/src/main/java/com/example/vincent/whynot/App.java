@@ -26,7 +26,9 @@ public class App extends Application{
     private Context myContext;
     private Location userLocation;
     private static ArrayList<Event> eventsArray;
-    public static double radiusLength = 80;
+    private int offset = 0;
+    private int eventsCount = 0;
+    public static double radiusLength = 10;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
@@ -106,12 +108,37 @@ public class App extends Application{
         eventsArray = newEventsArray;
     }
 
+    public void appendEvents(ArrayList<Event> newEventsArray) {
+        for (Event event : newEventsArray) {
+            eventsArray.add(event);
+        }
+    }
+
     public ArrayList<Event> getEventsArray() {
         return eventsArray;
     }
 
     public double getRadiusLength() {
         return radiusLength;
+    }
+
+    public void setOffset(int newOffset) {
+        System.out.println("Testing: Offset = " + newOffset);
+        System.out.println("Testing: Events count = " + eventsCount);
+        offset = newOffset;
+    }
+
+    public void setEventsCount(int newEventsCount) {
+        System.out.println("Testing: Events count = " + newEventsCount);
+        eventsCount = newEventsCount;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getEventsCount() {
+        return eventsCount;
     }
 
 }
