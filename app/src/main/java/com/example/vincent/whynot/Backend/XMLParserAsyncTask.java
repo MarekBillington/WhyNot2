@@ -43,7 +43,13 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        myApp.myActivity.updateFromEvents(myApp);
+        myApp.setOffset(myApp.getOffset() + 20);
+        if (myApp.getOffset() < myApp.getEventsCount()) {
+            myApp.getEventsStringHTTPRequest();
+        } else {
+            myApp.myActivity.updateFromEvents(myApp);
+            myApp.setOffset(0);
+        }
     }
 
     // Helper functions
@@ -74,6 +80,9 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                 Node dt_start = event.getElementsByTagName("datetime_start").item(0);
                 eventObject.setDt_start(dt_start.getTextContent());
 
+                Node endDate = event.getElementsByTagName("datetime_end").item(0);
+                eventObject.setEndDate(endDate.getTextContent());
+
                 Node web = event.getElementsByTagName("url").item(0);
                 eventObject.setWebpage(web.getTextContent());
 
@@ -86,16 +95,15 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
 
                 Node lng = point.getElementsByTagName("lng").item(0);
                 eventObject.setLongitude(Float.parseFloat(lng.getTextContent()));
+
+                eventObject.setDistance();
+
                 Node free = event.getElementsByTagName("is_free").item(0);
-
                 if (free.getTextContent() == "0") {
-
                     ArrayList<String> prices = new ArrayList<>();
                     Element ticket_types = (Element)event.getElementsByTagName("ticket_types").item(0);
                     NodeList t_types = ticket_types.getElementsByTagName("ticket_type");
-
                     for(int j = 0; j < t_types.getLength(); j++) {
-
                         int pricePointer = 0;
                         Element ticket_type = (Element) t_types.item(j);
                         Node price = ticket_type.getElementsByTagName("price").item(0);
@@ -103,26 +111,27 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     }
                 }
 
-                Element all_img = (Element)event.getElementsByTagName("images").item(0);
+                Element all_img = (Element) event.getElementsByTagName("images").item(0);
                 NodeList images = all_img.getElementsByTagName("image");
-
                 for (int j = 0; j < images.getLength(); j++) {
-
                     Element img = (Element) images.item(j);
                     NodeList trans = img.getElementsByTagName("transform");
                     int imgpointer = 0;
                     for (int k = 0; k < trans.getLength(); k++) {
-
                         Element tran = (Element) trans.item(k);
                         Node width = tran.getElementsByTagName("width").item(0);
                         if(width.getTextContent() == "350") {
-
                             Node url = tran.getElementsByTagName("url").item(0);
                             eventObject.setImgUrl(url.getTextContent());
                         }
                     }
                 }
-                myEvents.add(eventObject);
+
+                if (eventObject.verifySelf()) {
+                    myEvents.add(eventObject);
+                }
+
+
             }
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
@@ -134,9 +143,12 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
             ioe.printStackTrace();
         }
 
-        myApp.setEventsArray(myEvents);
-        System.out.println("Testing: Events array size = " + myEvents.size());
-        System.out.println("Testing: Events array = " + myEvents);
+        if (myApp.getEventsArray() == null) {
+            myApp.setEventsArray(myEvents);
+        } else {
+            myApp.appendEvents(myEvents);
+        }
+        System.out.println("Testing: Events array size = " + myApp.getEventsArray().size());
     }
 
 }
