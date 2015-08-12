@@ -31,7 +31,7 @@ public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
         String provider = locationManager.getBestProvider(criteria, true);
         location = locationManager.getLastKnownLocation(provider);
         myApp.setUserLocation(location);
-        return "Testing: User's current location = " + location;
+        return "Testing: Users current location = " + location;
     }
 
     // Begins a new async task to connect to the eventfinda REST API

@@ -30,8 +30,6 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
 
     private App myApp;
     private int offset = 0;
-    private int eventsCount;
-    private int eventsPulled = 0;
 
     public ConnectToRESTAsyncTask(App app) {
         myApp = app;

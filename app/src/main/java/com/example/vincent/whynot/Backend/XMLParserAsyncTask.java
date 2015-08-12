@@ -148,7 +148,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         } else {
             myApp.appendEvents(myEvents);
         }
-        System.out.println("Testing: Events array size = " + myApp.getEventsArray().size());
+        System.out.println("Testing: Events array size =  " + myApp.getEventsArray().size());
     }
 
 }
