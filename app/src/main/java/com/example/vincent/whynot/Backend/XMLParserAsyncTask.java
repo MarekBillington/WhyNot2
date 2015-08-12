@@ -104,26 +104,38 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     }
                 }
 
+                //Get the best image for the event item background
+                //This could probably be placed in its own method
                 Element all_img = (Element)event.getElementsByTagName("images").item(0);
                 NodeList images = all_img.getElementsByTagName("image");
 
                 for (int j = 0; j < images.getLength(); j++) {
-
                     Element img = (Element) images.item(j);
+                    // Check if this image is the primary image, if not, continue
+                    Node isPrimary = img.getElementsByTagName("is_primary").item(0);
+                    if(Integer.parseInt(isPrimary.getTextContent()) != 1) continue;
+
                     NodeList trans = img.getElementsByTagName("transform");
                     int imgpointer = 0;
                     for (int k = 0; k < trans.getLength(); k++) {
+                        //Element tran = (Element) trans.item(k);
+                        //Node width = tran.getElementsByTagName("width").item(0);
 
+                        //Find the optimal transformation of the image, ideally 650x280 (id = 7)
+                        //Otherwise, 350x350 (id = 27)
                         Element tran = (Element) trans.item(k);
-                        Node width = tran.getElementsByTagName("width").item(0);
-                        if(Integer.parseInt(width.getTextContent()) >= 500) {
-
+                        Node width = tran.getElementsByTagName("transformation_id").item(0);
+                        if(Integer.parseInt(width.getTextContent()) == 7) {
                             Node url = tran.getElementsByTagName("url").item(0);
                             eventObject.setImgUrl(url.getTextContent());
                             break;
+                        }else if(Integer.parseInt(width.getTextContent()) == 27) {
+                            Node url = tran.getElementsByTagName("url").item(0);
+                            eventObject.setImgUrl(url.getTextContent());
                         }
                     }
                 }
+                eventObject.setDistance();
                 myEvents.add(eventObject);
             }
         } catch (ParserConfigurationException pce) {

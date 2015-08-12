@@ -4,6 +4,7 @@ import com.example.vincent.whynot.App;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -97,6 +98,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
             mue.printStackTrace();
         } catch (IOException ioe) {
             System.out.println("Issue with retrieving data from eventfinda");
+            //Toast.makeText(myApp.getApplicationContext(),"Issue with retrieving data from eventfinda",Toast.LENGTH_SHORT).show();
             ioe.printStackTrace();
         }
         // Pass the retrieved string to onPostExecute() method

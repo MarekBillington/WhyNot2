@@ -125,11 +125,14 @@ public class Tab1 extends Fragment {
     public void setUpCard(View card, Event event){
         TextView event_price = (TextView) card.findViewById(R.id.event_price);
         event_price.setText(event.isItCheap());//(event.getCheapest());
+
         TextView event_name = (TextView) card.findViewById(R.id.event_name);
         event_name.setText(event.getName());
+
         TextView event_distance = (TextView) card.findViewById(R.id.event_distance);
-        float distance = 20;//Float.parseFloat(event.getDistance())/1000;
-        distance = Math.round(distance);
+        float distance = Float.parseFloat(event.getDistance())/1000;
+        String distanceString = String.format("%.01f", distance);;
+        event_distance.setText(distanceString + "km");
 
         // Change to maps fragment and go to location
         final Location eventLocation = new Location("");
@@ -150,8 +153,6 @@ public class Tab1 extends Fragment {
             }
         });
 
-        String distanceString = distance + "";
-        event_distance.setText(distanceString + "km");
         final TextView event_description = (TextView) card.findViewById(R.id.event_description);
         event_description.setText(event.getDescription());
 
