@@ -29,10 +29,11 @@ import javax.xml.parsers.ParserConfigurationException;
 public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
 
     private App myApp;
-    private int offset = 0;
+    private int offset;
 
-    public ConnectToRESTAsyncTask(App app) {
+    public ConnectToRESTAsyncTask(App app, int asyncTaskOffset) {
         myApp = app;
+        offset = asyncTaskOffset;
     }
 
     // Overridden class methods
@@ -40,7 +41,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
         String results = getDataStringFromURL();
-        if (myApp.getEventsCount() == 0) {
+        if (myApp.getEventsCount() == 1) {
             myApp.setEventsCount(getEventsCountFromXMLString(results));
         }
         return results;
@@ -50,25 +51,42 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         // Call the XMLParser async task and pass it the String retrieved from the url
-        myApp.getEventsArrayFromString(result);
+        if (offset == 0) {
+            while (myApp.getOffset() < myApp.getEventsCount()) {
+                myApp.getEventsStringHTTPRequest(myApp.getOffset());
+                System.out.println("Testing: Spawning thread " + myApp.getOffset() / 20);
+                myApp.setOffset(myApp.getOffset() + 20);
+            }
+        } else {
+            System.out.println("Testing: Thread " + offset / 20 + " about to parse xml string into events");
+            myApp.getEventsArrayFromString(result, offset);
+        }
     }
 
     // Helper methods
 
     private String getDataStringFromURL() {
 
+        // Initialise url to be used
+        URL url;
         // Initialise string to be returned
         String results = "";
+
         // Try to establish URL connection with HttpURLConnection object
         try {
-            /*URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?rows=20&end_date=2015-08-12%2023:59:59" + "&offset=" + offset +
-                    "&point=-36.84846,174.763332&radius=" + myApp.getRadiusLength());*/
-
-            URL url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date&rows=20&end_date=" +
-                    getEndDateTimeString() + "&offset=" + myApp.getOffset() +
-                    "&point=" + getUserLocationCoordinateString() +
-                    "&radius=" + myApp.getRadiusLength());
-
+            if (myApp.getUserLocation() == null) {
+                url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date" +
+                        "&rows=20" +
+                        "&end_date=2015-08-13%2023:59:59" +
+                        "&offset=" + offset);
+            } else {
+                url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date" +
+                        "&rows=20" +
+                        "&end_date=" + getEndDateTimeString() +
+                        "&offset=" + offset +
+                        "&point=" + getUserLocationCoordinateString() +
+                        "&radius=" + myApp.getRadiusLength());
+            }
             System.out.println("Testing: URL = " + url);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Try to initialise a buffered input stream from the url connection,
@@ -106,8 +124,10 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
             DocumentBuilder b = f.newDocumentBuilder();
             Document doc = b.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
             NodeList events = doc.getElementsByTagName("events");
-            eventsCount = Integer.valueOf(events.item(0).getAttributes().getNamedItem("count").getNodeValue());
-            System.out.println("Testing: Events count = " + events.item(0).getAttributes().getNamedItem("count").getNodeValue());
+            eventsCount = Integer.valueOf(events.item(0).getAttributes().
+                    getNamedItem("count").getNodeValue());
+            System.out.println("Testing: Events count = " + events.item(0).getAttributes().
+                    getNamedItem("count").getNodeValue());
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
         } catch (UnsupportedEncodingException uce) {
@@ -130,6 +150,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         return endDateTimeString;
     }
 
+    // returns a string of the users location coordinates for use in the url request parameters
     private String getUserLocationCoordinateString() {
         Location userLocation = myApp.getUserLocation();
         String latitude = Double.toString(userLocation.getLatitude());
@@ -145,18 +166,8 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String nextLine = "";
-            String xmlCheck = "xml";
-            String eventsCheck = "events count=";
             while ((nextLine = reader.readLine()) != null) {
-                if (offset == 0) {
                     sb.append(nextLine);
-                } else if (nextLine.contains(xmlCheck)) {
-                    System.out.println("Testing: xml declaration removed from string");
-                } else if (nextLine.contains(eventsCheck)) {
-                    System.out.println("Testing: events declaration removed from string");
-                } else {
-                    sb.append(nextLine);
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
