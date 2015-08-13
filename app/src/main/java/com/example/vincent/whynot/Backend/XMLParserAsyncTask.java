@@ -56,7 +56,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        ;
+        
         if ((offset + 20) >= myApp.getEventsCount()) {
             System.out.println("Testing: Thread" + offset / 20 + " has offset + 20 larger than " +
                     "or equal to the number of events (offset = " + offset + ", events count = " +

@@ -28,7 +28,7 @@ public class App extends Application{
     private static CopyOnWriteArrayList<Event> eventsArray;
     private int offset = 0;
     private int eventsCount = 0;
-    public static double radiusLength = 1;
+    public static double radiusLength = 2;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 

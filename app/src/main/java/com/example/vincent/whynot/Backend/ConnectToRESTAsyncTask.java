@@ -42,7 +42,8 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
         String results = getDataStringFromURL();
-        if (myApp.getEventsCount() == 1) {
+        System.out.println("testing results at strt" + myApp.getEventsCount());
+        if (myApp.getEventsCount() == 0) {
             myApp.setEventsCount(getEventsCountFromXMLString(results));
         }
         return results;
@@ -51,15 +52,16 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
+
         // Call the XMLParser async task and pass it the String retrieved from the url
-        System.out.println("Testing: total eventcount: " + myApp.getEventsCount());
-        if (offset == 0) {
+        if (myApp.getOffset() == 0) { //Changed this to == 0
+            myApp.setOffset(myApp.getOffset() + 20); // If this isn't incremented, it will send out another request from offset 0
             while (myApp.getOffset() < myApp.getEventsCount()) {
                 myApp.getEventsStringHTTPRequest(myApp.getOffset());
                 System.out.println("Testing: Spawning thread " + myApp.getOffset() / 20);
                 myApp.setOffset(myApp.getOffset() + 20);
             }
-        }
+        }// Got rid of the else statement
         System.out.println("Testing: Thread " + offset / 20 + " about to parse xml string into events");
         myApp.getEventsArrayFromString(result, offset);
 
