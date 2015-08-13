@@ -31,6 +31,7 @@ public class Event {
     private String distanceTo;
     private String cheapest;
     private String webpage;
+    private String category;
 
 
     // New event constructor that initialises all values rather than using setters
@@ -38,7 +39,7 @@ public class Event {
     // using setters
     public Event(App app, String id, String name, String description, String location,
                  double latitude, double longitude, boolean free, String restrictions,
-                 String distanceTo, String cheapest, String webpage) {
+                 String distanceTo, String cheapest, String webpage, String category) {
         this.myApp = app;
         this.id = id;
         this.name = name;
@@ -51,6 +52,7 @@ public class Event {
         this.distanceTo = distanceTo;
         this.cheapest = cheapest;
         this.webpage = webpage;
+        this.category = category;
     }
 
     public Event(App app) {
@@ -66,14 +68,13 @@ public class Event {
     }
 
     public void setName(String name){
-        this.name = name;
+        this.name = stripCDATA(name);
     }
 
     public void setDescription(String desc){
 
         if (desc.length() > 10) {
-            desc = desc.substring(9, desc.length() - 1);
-            this.description = desc;
+            this.description = stripCDATA(desc);
         } else {
             this.description = "No available description";
         }
@@ -163,6 +164,14 @@ public class Event {
 
     public void setImgUrl(String url) {
         this.img_url = url;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = stripCDATA(category);
     }
 
     public String getDistance() {
@@ -256,6 +265,19 @@ public class Event {
 
         output += "%" + this.getWebpage() + "\n";
         return output;
+    }
+
+    public String stripCDATA(String s) {
+        s = s.trim();
+        if (s.startsWith("<![CDATA[")) {
+            s = s.substring(9);
+            int i = s.indexOf("]]>");
+            if (i == -1) {
+                i = s.length();
+            }
+            s = s.substring(0, i);
+        }
+        return s;
     }
 
 

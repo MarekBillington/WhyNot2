@@ -124,7 +124,7 @@ public class Tab1 extends Fragment {
 
     public void setUpCard(View card, Event event){
         TextView event_price = (TextView) card.findViewById(R.id.event_price);
-        event_price.setText(event.isItCheap());//(event.getCheapest());
+        event_price.setText(event.getCategory());//(event.getCheapest());
 
         TextView event_name = (TextView) card.findViewById(R.id.event_name);
         event_name.setText(event.getName());

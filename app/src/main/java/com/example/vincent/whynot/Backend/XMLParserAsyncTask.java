@@ -77,6 +77,15 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                 Node desc = event.getElementsByTagName("description").item(0);
                 eventObject.setDescription(desc.getTextContent());
 
+                // Get the category
+                Node category = event.getElementsByTagName("category").item(0);
+                NodeList categoryNodeList = category.getChildNodes();
+                for (int j = 0; j < categoryNodeList.getLength(); j++){
+
+                    if(categoryNodeList.item(j).getNodeName().equals("name"))
+                        eventObject.setCategory(categoryNodeList.item(j).getTextContent());
+                }
+
                 Node dt_start = event.getElementsByTagName("datetime_start").item(0);
                 eventObject.setDt_start(dt_start.getTextContent());
 
@@ -110,7 +119,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                         prices.add(price.getTextContent());
                     }
                 }
-                
+
                 //Get the best image for the event item background
                 //This could probably be placed in its own method
                 Element all_img = (Element)event.getElementsByTagName("images").item(0);
@@ -131,21 +140,21 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                         //Find the optimal transformation of the image, ideally 650x280 (id = 7)
                         //Otherwise, 350x350 (id = 27)
                         Element tran = (Element) trans.item(k);
-                        Node width = tran.getElementsByTagName("transformation_id").item(0);
-                        if(Integer.parseInt(width.getTextContent()) == 7) {
+                        Node transformationId = tran.getElementsByTagName("transformation_id").item(0);
+                        if(Integer.parseInt(transformationId.getTextContent()) == 7) {
                             Node url = tran.getElementsByTagName("url").item(0);
                             eventObject.setImgUrl(url.getTextContent());
                             break;
-                        }else if(Integer.parseInt(width.getTextContent()) == 27) {
+                        }else if(Integer.parseInt(transformationId.getTextContent()) == 27) {
                             Node url = tran.getElementsByTagName("url").item(0);
                             eventObject.setImgUrl(url.getTextContent());
                         }
                     }
                 }
                 eventObject.setDistance();
-                if (eventObject.verifySelf()) {
+                ////if (eventObject.verifySelf()) {
                     myEvents.add(eventObject);
-                }
+                //}
             }
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
