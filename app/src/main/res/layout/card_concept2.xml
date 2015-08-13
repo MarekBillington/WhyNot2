@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cardContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
-
+    android:background="#ffffff"
+    android:padding="8dp">
 
     <TextView
-        android:id="@+id/event_name"
+        android:id="@id/event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
         android:text="Event name goes here"
-        android:textColor="@color/background_material_dark"
-        android:textSize="18sp" />
+        android:textColor="@color/primary_dark_material_dark"
+        android:textSize="18dp" />
 
+    <Button
+        android:id="@+id/event_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/event_name"
+        android:layout_alignParentRight="true"
+        android:layout_alignRight="@id/banner"
+        android:layout_alignTop="@id/event_name"
+        android:background="#ED3945"
+        android:text="More"
+        android:textColor="#ffffff" />
 
     <RelativeLayout
         android:id="@+id/image_container"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_below="@id/event_name"
-        android:layout_marginTop="8dp">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_name">
 
         <ImageView
             android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/banner"
-            android:layout_alignParentRight="true"
-            android:layout_margin="8dp"
-            android:text="$20"
-            android:textColor="#ffffff"
-            android:textSize="32sp" />
-
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/img1" />
     </RelativeLayout>
+
+
+    <View
+        android:id="@+id/sep1"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/image_container"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray" />
 
     <TextView
         android:id="@+id/event_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/image_container"
+        android:layout_below="@id/sep1"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:gravity="center_vertical"
@@ -63,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/image_container"
+        android:layout_below="@id/sep1"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
         android:gravity="center_vertical"
@@ -85,21 +92,13 @@
         android:textSize="16sp" />
 
     <ImageView
+        android:layout_toRightOf="@id/event_distance"
+        android:layout_below="@id/event_category"
+        android:layout_marginLeft="8dp"
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_category"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/event_distance"
         android:src="@drawable/ic_explore_black_24dp"></ImageView>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignRight="@id/event_time"
-        android:layout_alignTop="@id/event_distance"
-        android:layout_below="@id/event_time"
-        android:src="@drawable/ic_more_vert_black_24dp" />
-</RelativeLayout>
 
+</RelativeLayout>

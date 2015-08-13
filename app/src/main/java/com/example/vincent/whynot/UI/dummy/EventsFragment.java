@@ -4,9 +4,7 @@ package com.example.vincent.whynot.UI.dummy;
  * Created by George on 8/8/2015.
  */
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,19 +12,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.Event;
@@ -34,9 +27,6 @@ import com.example.vincent.whynot.UI.MainActivity;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -86,7 +76,7 @@ public class EventsFragment extends Fragment {
             setUpCard(card, event);
             formatCard(card);
             tabLinearLayout.addView(card);
-            final RelativeLayout banner = (RelativeLayout) card.findViewById(R.id.banner);
+            final RelativeLayout banner = (RelativeLayout) card.findViewById(R.id.image_container);
             banner.setBackgroundColor(Color.parseColor(colours[i % 6]));
 
             Picasso.with(getActivity()).load(event.getImg_url()).resize(650, 280).centerCrop().into(new Target() {
@@ -118,17 +108,21 @@ public class EventsFragment extends Fragment {
         card.setLayoutParams(params);
 
         TextView textView = (TextView) card.findViewById(R.id.event_description);
-        textView.setVisibility(View.GONE);
+        //textView.setVisibility(View.GONE);
 
 
     }
 
     public void setUpCard(View card, Event event){
         TextView event_price = (TextView) card.findViewById(R.id.event_price);
-        event_price.setText(event.getCategory());//(event.getCheapest());
+        //event_price.setText(event.getCheapest());
+
+        TextView event_category = (TextView) card.findViewById(R.id.event_category);
+        event_category.setText(event.getCategory());//(event.getCheapest());
 
         TextView event_name = (TextView) card.findViewById(R.id.event_name);
-        event_name.setText(event.getName());
+        String eventName = event.getName();
+        event_name.setText(formatName(eventName));
 
         TextView event_distance = (TextView) card.findViewById(R.id.event_distance);
         float distance = Float.parseFloat(event.getDistance())/1000;
@@ -155,12 +149,12 @@ public class EventsFragment extends Fragment {
         });
 
         final TextView event_description = (TextView) card.findViewById(R.id.event_description);
-        event_description.setText(event.getDescription());
+        //event_description.setText(event.getDescription());
 
         // Only get the time, not the date
         TextView event_time = (TextView) card.findViewById(R.id.event_time);
         String time = event.getDt_start().substring(event.getDt_start().length() - 9, event.getDt_start().length() - 3);
-        event_time.setText(time);
+        event_time.setText(formatTime(time));
     }
 
 
@@ -168,4 +162,19 @@ public class EventsFragment extends Fragment {
         this.mainActivity = mainActivity;
     }
 
+    public String formatName(String title){
+        if (title.length() > 35){
+            return title.substring(0, 35) + "...";
+        } else{
+            return title;
+        }
+    }
+
+    public String formatTime(String time){
+        if (Integer.parseInt(time.substring(1, 3)) > 12 ){
+            return String.valueOf(Integer.parseInt(time.substring(1, 3)) - 12) + time.substring(3, 6) + "pm";
+        } else{
+            return time + "am";
+        }
+    }
 }
