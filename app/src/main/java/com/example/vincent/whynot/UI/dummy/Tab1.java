@@ -54,6 +54,7 @@ public class Tab1 extends Fragment {
 
     public static String colours[] = {"#FF3A3A", "#9737CC", "#f3E6BC","#59E734","#FFE23A","#2CC1C1"};
     private Context context;
+    private ViewGroup container;
 
 
     @Override
@@ -63,6 +64,7 @@ public class Tab1 extends Fragment {
         this.inflater = inflater;
         this.layout = (LinearLayout) view.findViewById(R.id.tabLinearLayout);
         this.context = view.getContext();
+        this.container = container;
 
 
         //setUpSlider(view);
@@ -73,10 +75,17 @@ public class Tab1 extends Fragment {
         return view;
     }
 
+    /** Remove all event item in the list and re add them. **/
     public void updateList(App app){
+        layout.removeViewsInLayout(0, layout.getChildCount());
         displaySurface(app.getEventsArray(), layout, inflater);
     }
 
+    public void addLoadingItem(){
+
+        View card = this.inflater.inflate(R.layout.fragment_splash, container);
+        this.layout.addView(card);
+    }
 
     public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
 

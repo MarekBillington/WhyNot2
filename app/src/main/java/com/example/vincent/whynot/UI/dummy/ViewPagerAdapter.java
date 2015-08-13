@@ -7,7 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.UI.MainActivity;
+import com.example.vincent.whynot.UI.SplashFragment;
 
 /**
  * Created by hp1 on 21-01-2015.
@@ -18,15 +20,17 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
     /** The 2 fragment are stored as variables, to be referred to later. **/
+    private App app;
     private MapsFragment mapsFragment;
     private MainActivity mainActivity;
     private Tab1 listFragment;
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(MainActivity mainActivity,FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ViewPagerAdapter(App app, MainActivity mainActivity,FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
 
+        this.app = app;
         this.mainActivity = mainActivity;
         this.Titles = mTitles;
         this.NumbOfTabs = mNumbOfTabsumb;
@@ -41,11 +45,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         {
             Tab1 tab1;
             // The splash screen will be implemented later
-            //if(App.events.isEmpty()) tab1 = new SplashFragment();
-            //else
-            tab1 = new Tab1();
-            tab1.setMainActivity(mainActivity);
-            listFragment = tab1;
+           // if(app.getEventsArray().isEmpty()) tab1 = new SplashFragment();
+          //  else {
+                tab1 = new Tab1();
+                listFragment = tab1;
+                listFragment.setMainActivity(mainActivity);
+            //}
             return tab1;
         }
         else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
@@ -55,8 +60,16 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             this.mapsFragment = mapsFragment;
             return mapsFragment;
         }
+    }
 
+    public void setLoading(){
+        if(listFragment != null) listFragment.addLoadingItem();
+    }
 
+    public void updateList(){
+        //listFragment = new Tab1();
+        //listFragment.setMainActivity(mainActivity);
+        listFragment.updateList(this.app);
     }
 
     // This method return the titles for the Tabs in the Tab Strip

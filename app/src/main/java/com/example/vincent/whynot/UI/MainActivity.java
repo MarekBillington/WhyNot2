@@ -44,9 +44,10 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
+        applicationData = new App(getApplicationContext(), this);
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, TITLES fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(this,fragmentManager, TITLES, NUMBOFTABS);
+        adapter =  new ViewPagerAdapter(applicationData, this,fragmentManager, TITLES, NUMBOFTABS);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -66,14 +67,13 @@ public class MainActivity extends FragmentActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-
-        applicationData = new App(getApplicationContext(), this);
+        adapter.setLoading();
     }
 
     /** After events have been recieved, update both the list and maps fragments. **/
     public void updateFromEvents(App app){
         adapter.getMapsFragment().placeMarkers(app);
-        adapter.getListFragment().updateList(app);
+        adapter.updateList();
     }
 
     public void expandCard(View view){

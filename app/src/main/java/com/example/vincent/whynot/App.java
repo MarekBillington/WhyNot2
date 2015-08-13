@@ -25,7 +25,7 @@ public class App extends Application{
     public MainActivity myActivity;
     private Context myContext;
     private Location userLocation;
-    private static CopyOnWriteArrayList<Event> eventsArray;
+    private static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
     private int offset = 0;
     private int eventsCount = 0;
     public static double radiusLength = 2;
@@ -45,7 +45,7 @@ public class App extends Application{
         // Begin the chain of async tasks that will eventually
         // return the array of events to this App class
         startAsyncTaskChain();
-
+        eventsArray.clear();
     }
 
     // Set the global authentication credentials
