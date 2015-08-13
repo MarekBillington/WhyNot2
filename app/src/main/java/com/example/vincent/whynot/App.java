@@ -16,7 +16,7 @@ import com.example.vincent.whynot.UI.MainActivity;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class App extends Application{
@@ -25,7 +25,7 @@ public class App extends Application{
     public MainActivity myActivity;
     private Context myContext;
     private Location userLocation;
-    private static ArrayList<Event> eventsArray;
+    private static CopyOnWriteArrayList<Event> eventsArray;
     private int offset = 0;
     private int eventsCount = 0;
     public static double radiusLength = 1;
@@ -80,17 +80,21 @@ public class App extends Application{
         locationManagerAsyncTask.execute();
     }
 
+    public void setEventsCountFromHTTPRequest() {
+
+    }
+
     // Get events data string from eventfinda, called from
     // the LocationManagerAsyncTask onPostExecute() method
-    public void getEventsStringHTTPRequest() {
-        ConnectToRESTAsyncTask httpRequest = new ConnectToRESTAsyncTask(this);
+    public void getEventsStringHTTPRequest(int asyncTaskOffset) {
+        ConnectToRESTAsyncTask httpRequest = new ConnectToRESTAsyncTask(this, asyncTaskOffset);
         httpRequest.execute();
     }
 
     // Build the events array from the string returned by
     // the http request, called in the ConnectToRESTAsyncTask onPostExecute() method
-    public void getEventsArrayFromString(String xmlString) {
-        XMLParserAsyncTask xmlParser = new XMLParserAsyncTask(this, xmlString);
+    public void getEventsArrayFromString(String xmlString, int asyncTaskOffset) {
+        XMLParserAsyncTask xmlParser = new XMLParserAsyncTask(this, xmlString, asyncTaskOffset);
         xmlParser.execute();
     }
 
@@ -100,37 +104,36 @@ public class App extends Application{
         this.userLocation = newLocation;
     }
 
-    public Location getUserLocation() {
-        return userLocation;
-    }
-
-    public void setEventsArray(ArrayList<Event> newEventsArray) {
+    public void setEventsArray(CopyOnWriteArrayList<Event> newEventsArray) {
         eventsArray = newEventsArray;
     }
 
-    public void appendEvents(ArrayList<Event> newEventsArray) {
+    public void appendEvents(CopyOnWriteArrayList<Event> newEventsArray) {
         for (Event event : newEventsArray) {
             eventsArray.add(event);
         }
     }
 
-    public ArrayList<Event> getEventsArray() {
+    public void setOffset(int newOffset) {
+        System.out.println("Testing: Setting Offset (should happen until more than (" + eventsCount + ")) = " + newOffset);
+        offset = newOffset;
+    }
+
+    public void setEventsCount(int newEventsCount) {
+        System.out.println("Testing: Setting Events count (should only happen once) = " + newEventsCount);
+        eventsCount = newEventsCount;
+    }
+
+    public Location getUserLocation() {
+        return userLocation;
+    }
+
+    public CopyOnWriteArrayList<Event> getEventsArray() {
         return eventsArray;
     }
 
     public double getRadiusLength() {
         return radiusLength;
-    }
-
-    public void setOffset(int newOffset) {
-        System.out.println("Testing: Offset = " + newOffset);
-        System.out.println("Testing: Events count = " + eventsCount);
-        offset = newOffset;
-    }
-
-    public void setEventsCount(int newEventsCount) {
-        System.out.println("Testing: Events count = " + newEventsCount);
-        eventsCount = newEventsCount;
     }
 
     public int getOffset() {

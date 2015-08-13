@@ -27,10 +27,21 @@ public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
     // Gets the users current location and sets it to the App.userLocation property
     @Override
     protected String doInBackground(Void... params) {
+
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, true);
-        location = locationManager.getLastKnownLocation(provider);
-        myApp.setUserLocation(location);
+        if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            myApp.setUserLocation(location);
+            System.out.println("Testing: User location found using GPS");
+        } else if (locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            myApp.setUserLocation(location);
+            System.out.println("Testing: User location found using Network Provider");
+        } else {
+            System.out.println("Testing: User location unable to be found");
+        }
+        System.out.println("Testing: Users current location = " + location);
         return "Testing: Users current location = " + location;
     }
 
@@ -38,9 +49,9 @@ public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        // Start the ConnectToRESTAsyncTask async task
-        myApp.getEventsStringHTTPRequest();
-        System.out.println(result);
+        // Get the total returned events count
+        myApp.getEventsStringHTTPRequest(myApp.getOffset());
+
     }
 
 }

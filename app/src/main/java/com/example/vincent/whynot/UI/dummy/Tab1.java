@@ -37,6 +37,7 @@ import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by hp1 on 21-01-2015.
@@ -77,7 +78,7 @@ public class Tab1 extends Fragment {
     }
 
 
-    public void displaySurface(ArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
+    public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
 
         for (int i = 0; i < eventArrayList.size(); i++){
             View card = inflater.inflate(R.layout.card_2, null);
