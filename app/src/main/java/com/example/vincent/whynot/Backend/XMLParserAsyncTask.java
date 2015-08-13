@@ -59,7 +59,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         ;
         if ((offset + 20) >= myApp.getEventsCount()) {
             System.out.println("Testing: Thread" + offset / 20 + " has offset + 20 larger than " +
-                    "or equal to the number of events (offset = " + offset + "," +
+                    "or equal to the number of events (offset = " + offset + ", events count = " +
                     myApp.getEventsCount() + "). Calling update from events :)");
             myApp.myActivity.updateFromEvents(myApp);
             myApp.setOffset(0);
