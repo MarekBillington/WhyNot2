@@ -71,12 +71,12 @@ public class EventsFragment extends Fragment {
     public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
 
         for (int i = 0; i < eventArrayList.size(); i++){
-            View card = inflater.inflate(R.layout.card_2, null);
+            View card = inflater.inflate(R.layout.card_2_original, null);
             Event event = eventArrayList.get(i);
             setUpCard(card, event);
             formatCard(card);
             tabLinearLayout.addView(card);
-            final RelativeLayout banner = (RelativeLayout) card.findViewById(R.id.image_container);
+            final RelativeLayout banner = (RelativeLayout) card.findViewById(R.id.banner);
             banner.setBackgroundColor(Color.parseColor(colours[i % 6]));
 
             Picasso.with(getActivity()).load(event.getImg_url()).resize(650, 280).centerCrop().into(new Target() {
@@ -149,7 +149,7 @@ public class EventsFragment extends Fragment {
         });
 
         final TextView event_description = (TextView) card.findViewById(R.id.event_description);
-        //event_description.setText(event.getDescription());
+        event_description.setText(event.getDescription());
 
         // Only get the time, not the date
         TextView event_time = (TextView) card.findViewById(R.id.event_time);
