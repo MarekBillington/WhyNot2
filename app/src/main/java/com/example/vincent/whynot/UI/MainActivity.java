@@ -79,13 +79,16 @@ public class MainActivity extends FragmentActivity {
     public void expandCard(View view){
         View parent = (ViewGroup)view.getParent();
         TextView textView = (TextView) parent.findViewById(R.id.event_description);
+        View seperator = (View) parent.findViewById(R.id.sep1);
         if(textView.isShown()){
             com.example.vincent.whynot.UI.Fx.slide_up(this, textView);
             textView.setVisibility(View.GONE);
+            seperator.setVisibility(View.GONE);
         }
         else{
             com.example.vincent.whynot.UI.Fx.slide_down(this, textView);
             textView.setVisibility(View.VISIBLE);
+            seperator.setVisibility(View.VISIBLE);
         }
     }
 

@@ -7,46 +7,53 @@
     android:background="#ffffff">
 
 
-    <TextView
-        android:id="@+id/event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:text="Event name goes here"
-        android:textColor="@color/background_material_dark"
-        android:textSize="18sp" />
 
 
     <RelativeLayout
         android:id="@+id/image_container"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_below="@id/event_name"
-        android:layout_marginTop="8dp">
-
-        <ImageView
-            android:id="@+id/banner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="180dp">
+        <TextView
+            android:textStyle="bold"
+            android:fontFamily="Arial"
+            android:textSize="20sp"
+            android:textColor="@android:color/darker_gray"
+            android:background="@android:color/background_dark"
+            android:id="@+id/event_category"
+            android:text="Free"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/event_name"
+            android:padding="8dp"/>
+        <TextView
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@android:color/background_dark"
+            android:fontFamily="Arial"
+            android:textSize="20sp"
+            android:id="@+id/event_name"
+            android:text="Long event name is going to be written here"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/banner"
             android:layout_alignParentRight="true"
             android:layout_margin="8dp"
             android:text="$20"
+            android:id="@+id/event_price"
             android:textColor="#ffffff"
             android:textSize="32sp" />
 
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/event_category"
+        android:id="@+id/event_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_container"
@@ -55,7 +62,7 @@
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:text="Alternative, Indie"
+        android:text="3F, 30 Randolph st, Eden Terrace"
         android:textSize="16sp" />
 
     <TextView
@@ -72,11 +79,20 @@
         android:text="8:00pm"
         android:textSize="16sp" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_location"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_explore_black_24dp"></ImageView>
+
     <TextView
         android:id="@+id/event_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_category"
+        android:layout_below="@id/event_location"
+        android:layout_toRightOf="@id/imageView"
         android:layout_marginLeft="8dp"
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
@@ -84,31 +100,37 @@
         android:text="2.4km"
         android:textSize="16sp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/event_category"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/event_distance"
-        android:src="@drawable/ic_explore_black_24dp"></ImageView>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_alignParentRight="true"
         android:layout_alignRight="@id/event_time"
         android:layout_alignTop="@id/event_distance"
         android:layout_below="@id/event_time"
         android:src="@drawable/ic_more_vert_black_24dp"
         android:onClick="expandCard"/>
+    <View
+        android:id="@+id/sep1"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/event_distance"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:visibility="gone"
+        android:background="@android:color/darker_gray" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginTop="8dp"
         android:onClick="expandCard"
         android:text="@string/myString"
         android:layout_toLeftOf="@id/event_expand"
