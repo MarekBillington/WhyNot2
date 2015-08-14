@@ -71,7 +71,7 @@ public class EventsFragment extends Fragment {
     public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
 
         for (int i = 0; i < eventArrayList.size(); i++){
-            View card = inflater.inflate(R.layout.card_2_original, null);
+            View card = inflater.inflate(R.layout.card_original, null);
             Event event = eventArrayList.get(i);
             setUpCard(card, event);
             formatCard(card);
@@ -108,7 +108,7 @@ public class EventsFragment extends Fragment {
         card.setLayoutParams(params);
 
         TextView textView = (TextView) card.findViewById(R.id.event_description);
-        //textView.setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
 
 
     }
