@@ -97,9 +97,11 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     Node category = event.getElementsByTagName("category").item(0);
                     NodeList categoryNodeList = category.getChildNodes();
                     for (int j = 0; j < categoryNodeList.getLength(); j++) {
+                        if (categoryNodeList.item(j).getNodeName().equals("parent_id"))
+                            eventObject.setCategory(Integer.parseInt(categoryNodeList.item(j).getTextContent()));
 
-                        if (categoryNodeList.item(j).getNodeName().equals("name"))
-                            eventObject.setCategory(categoryNodeList.item(j).getTextContent());
+                       // if (categoryNodeList.item(j).getNodeName().equals("name"))
+                        //   eventObject.setCategory(categoryNodeList.item(j).getTextContent());
                     }
 
                     Node dt_start = event.getElementsByTagName("datetime_start").item(0);
@@ -130,6 +132,9 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     eventObject.setDistance();
 
                     Node free = event.getElementsByTagName("is_free").item(0);
+                    if (free.getTextContent().equals("1")) eventObject.setCheapest("Free");
+                    else eventObject.setCheapest("Paid");
+
                     if (free.getTextContent() == "0") {
                         ArrayList<String> prices = new ArrayList<>();
                         Element ticket_types = (Element) event.getElementsByTagName("ticket_types").item(0);
@@ -146,23 +151,22 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                 //Get the best image for the event item background
                 //This could probably be placed in its own method
                 Element all_img = (Element) event.getElementsByTagName("images").item(0);
-
+                eventObject.setImg_url("");
                 NodeList images = all_img.getElementsByTagName("image");
                 for (int j = 0; j < images.getLength(); j++) {
                     Element img = (Element) images.item(j);
-                    // Check if this image is the primary image, if not, continue
+                    // Check if an image has already been assigned
                     Node isPrimary = img.getElementsByTagName("is_primary").item(0);
-                    if (Integer.parseInt(isPrimary.getTextContent()) != 1) continue;
+                    if (eventObject.getImg_url() != "") break;
 
                     NodeList trans = img.getElementsByTagName("transform");
-                    int imgpointer = 0;
-                    for (int k = 0; k < trans.getLength(); k++) {
-                        //Element tran = (Element) trans.item(k);
-                        //Node width = tran.getElementsByTagName("width").item(0);
 
+                    for (int k = 0; k < trans.getLength(); k++) {
                         //Find the optimal transformation of the image, ideally 650x280 (id = 7)
                         //Otherwise, 350x350 (id = 27)
                         Element tran = (Element) trans.item(k);
+                        //System.out.println("Testing images : " + eventObject.getName() + " " + tran.getElementsByTagName("url").item(0).getTextContent());
+
                         Node transformationId = tran.getElementsByTagName("transformation_id").item(0);
                         if (Integer.parseInt(transformationId.getTextContent()) == 7) {
                             Node url = tran.getElementsByTagName("url").item(0);

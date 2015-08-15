@@ -11,12 +11,15 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.dummy.SlidingTabLayout;
 import com.example.vincent.whynot.UI.dummy.ViewPagerAdapter;
+import com.squareup.picasso.Picasso;
 
 /**
  * The main activity, containing a view pager that contains 2 fragments, a list fragment
@@ -35,12 +38,13 @@ public class MainActivity extends FragmentActivity {
     private static final CharSequence TITLES[] = {"Events", "Map"};
     private static final int NUMBOFTABS = 2;
 
-    public App applicationData;
+    public static App applicationData;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
@@ -76,19 +80,24 @@ public class MainActivity extends FragmentActivity {
         adapter.updateList();
     }
 
+    /** Expand the card to show it's description. **/
     public void expandCard(View view){
         View parent = (ViewGroup)view.getParent();
         TextView textView = (TextView) parent.findViewById(R.id.event_description);
-        View seperator = (View) parent.findViewById(R.id.sep1);
+        ImageView expand = (ImageView) parent.findViewById(R.id.expand_view);
+        View separator = (View) parent.findViewById(R.id.sep1);
+
         if(textView.isShown()){
             com.example.vincent.whynot.UI.Fx.slide_up(this, textView);
             textView.setVisibility(View.GONE);
-            seperator.setVisibility(View.GONE);
+            separator.setVisibility(View.GONE);
+            expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
         }
         else{
             com.example.vincent.whynot.UI.Fx.slide_down(this, textView);
             textView.setVisibility(View.VISIBLE);
-            seperator.setVisibility(View.VISIBLE);
+            separator.setVisibility(View.VISIBLE);
+            expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
         }
     }
 

@@ -7,20 +7,20 @@
     android:background="#ffffff">
 
 
-
-
     <RelativeLayout
         android:id="@+id/image_container"
+        android:transitionName="container"
         android:layout_width="match_parent"
         android:layout_height="180dp">
         <TextView
             android:textStyle="bold"
             android:fontFamily="Arial"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="@android:color/darker_gray"
-            android:background="@android:color/background_dark"
+            android:background="#bb000000"
             android:id="@+id/event_category"
-            android:text="Free"
+            android:transitionName="category"
+            android:text="Sports and Outdoors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/event_name"
@@ -28,10 +28,12 @@
         <TextView
             android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:background="@android:color/background_dark"
+            android:background="#bb000000"
             android:fontFamily="Arial"
             android:textSize="20sp"
             android:id="@+id/event_name"
+            android:transitionName="name"
+            android:minWidth="100dp"
             android:text="Long event name is going to be written here"
             android:layout_marginRight="20dp"
             android:layout_alignParentBottom="true"
@@ -44,16 +46,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_margin="8dp"
             android:text="$20"
             android:id="@+id/event_price"
+            android:transitionName="price"
             android:textColor="#ffffff"
-            android:textSize="32sp" />
+            android:background="#bb000000"
+            android:textSize="26sp"
+            android:padding="8dp"/>
 
     </RelativeLayout>
 
     <TextView
         android:id="@+id/event_location"
+        android:transitionName="location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_container"
@@ -67,6 +72,7 @@
 
     <TextView
         android:id="@+id/event_time"
+        android:transitionName="time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -81,6 +87,7 @@
 
     <ImageView
         android:id="@+id/imageView"
+        android:transitionName="compass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/event_location"
@@ -89,6 +96,7 @@
 
     <TextView
         android:id="@+id/event_distance"
+        android:transitionName="distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/event_location"
@@ -105,11 +113,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
         android:layout_alignParentRight="true"
         android:layout_alignRight="@id/event_time"
         android:layout_alignTop="@id/event_distance"
         android:layout_below="@id/event_time"
-        android:src="@drawable/ic_more_vert_black_24dp"
+        android:src="@drawable/ic_expand_more_black_24dp"
+        android:id="@+id/expand_view"
         android:onClick="expandCard"/>
     <View
         android:id="@+id/sep1"

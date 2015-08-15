@@ -10,4 +10,5 @@
         an overall view of its content. The Android SDK provides the Expan
         dableListView class, but sometimes that option is overkill
         or unfit for our intents  purposes, and we may decide to roll out our own mechanism.</string>
+    <string name="title_activity_event">EventActivity</string>
 </resources>

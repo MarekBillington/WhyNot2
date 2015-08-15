@@ -15,6 +15,10 @@ import java.util.GregorianCalendar;
 
 
 public class Event {
+
+    public static final int CATEGORY_CONCERTS_GIG = 6, CATEGORY_SPORTS_OUTDOORS = 7, CATEGORY_WORKSHOPS_CLASSES = 3,
+                            CATEGORY_FESTIVALS_LIFESTYLE = 190, CATEGORY_PERFORMING_ARTS = 1, CATEGORY_EXHIBITIONS = 11;
+
     private App myApp;
     private String id;
     private String name;
@@ -31,7 +35,7 @@ public class Event {
     private String distanceTo;
     private String cheapest;
     private String webpage;
-    private String category;
+    private int category;
 
 
     // New event constructor that initialises all values rather than using setters
@@ -39,11 +43,11 @@ public class Event {
     // using setters
     public Event(App app, String id, String name, String description, String location,
                  double latitude, double longitude, boolean free, String restrictions,
-                 String distanceTo, String cheapest, String webpage, String category) {
+                 String distanceTo, String cheapest, String webpage, int category) {
         this.myApp = app;
         this.id = id;
-        this.name = name;
-        this.description = description;
+        this.name = stripCDATA(name);
+        this.description = stripCDATA(description);
         this.location = location;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -89,7 +93,7 @@ public class Event {
     }
 
     public void setLocation(String loc){
-        this.location = loc;
+        this.location = stripCDATA(loc);
     }
 
     public void setLatitude(float lat){
@@ -166,16 +170,36 @@ public class Event {
         this.img_url = url;
     }
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = stripCDATA(category);
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     public String getDistance() {
         return this.distanceTo ;
+    }
+
+
+    /** Returns the name of the event to a max length of 35 chars. **/
+    public String formatName(){
+        if (name.length() > 35){
+            return name.substring(0, 35) + "...";
+        } else{
+            return name;
+        }
+    }
+
+    /** Returns the time of the event formatted. **/
+    public String formatTime(){
+        String time = dt_start.substring(dt_start.length() - 9, dt_start.length() - 3);
+        if (Integer.parseInt(time.substring(1, 3)) > 12 ){
+            return String.valueOf(Integer.parseInt(time.substring(1, 3)) - 12) + time.substring(3, 6) + "pm";
+        } else{
+            return time + "am";
+        }
     }
 
     public void setDistance() {
@@ -278,6 +302,17 @@ public class Event {
             s = s.substring(0, i);
         }
         return s;
+    }
+
+    /** Seeing as category is stored as an int, this gives a string representation of it **/
+    public String getCategoryString(){
+        if(this.category == CATEGORY_CONCERTS_GIG) return "Concerts and Gigs";
+        else if(this.category == CATEGORY_EXHIBITIONS) return "Exhibitions";
+        else if(this.category == CATEGORY_FESTIVALS_LIFESTYLE) return "Festivals and Lifestyle";
+        else if(this.category == CATEGORY_SPORTS_OUTDOORS) return "Sports and Outdoors";
+        else if(this.category == CATEGORY_WORKSHOPS_CLASSES) return "Workshops, Classes and Courses";
+        else if(this.category == CATEGORY_PERFORMING_ARTS) return "Performing Arts";
+        else return "Other";
     }
 
 

@@ -11,7 +11,7 @@
         android:id="@+id/banner"
         android:layout_height="180dp"
         android:layout_alignParentTop="true"
-        android:src="@drawable/img1" />
+        android:src="@drawable/gigs" />
 
     <TextView
         android:id="@+id/event_name"

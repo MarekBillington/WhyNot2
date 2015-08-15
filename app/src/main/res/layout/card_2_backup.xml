@@ -80,7 +80,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="175dp"
-                android:background="@drawable/img1"
+                android:background="@drawable/gigs"
                 android:id="@+id/banner">
                 <TextView
                     android:textStyle="bold"

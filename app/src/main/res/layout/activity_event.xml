@@ -1,0 +1,142 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.vincent.whynot.UI.EventActivity">
+
+    <RelativeLayout
+        android:id="@+id/image_container"
+        android:transitionName="container"
+        android:background="@drawable/gigs"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$20"
+            android:id="@+id/event_price"
+            android:transitionName="price"
+            android:textColor="#ffffff"
+            android:background="#bb000000"
+            android:textSize="26sp"
+            android:padding="8dp"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:textStyle="bold"
+        android:fontFamily="Arial"
+        android:textSize="20sp"
+
+        android:id="@+id/event_category"
+        android:transitionName="category"
+        android:text="Sports and Outdoors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_name"
+        android:padding="8dp"/>
+    <TextView
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="#bb000000"
+        android:fontFamily="Arial"
+        android:textSize="26sp"
+        android:transitionName="name"
+        android:id="@+id/event_name"
+        android:minWidth="100dp"
+        android:text="Long event name is going to be written here"
+
+        android:layout_below="@+id/image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        />
+
+    <View
+        android:id="@+id/sep1"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/event_category"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/event_location"
+        android:transitionName="location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_category"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="3F, 30 Randolph st, Eden Terrace"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/event_time"
+        android:transitionName="time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/event_category"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="8:00pm"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:transitionName="compass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_location"
+        android:layout_marginLeft="12dp"
+        android:src="@drawable/ic_explore_black_24dp"></ImageView>
+
+    <TextView
+        android:id="@+id/event_distance"
+        android:transitionName="distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_location"
+        android:layout_toRightOf="@id/imageView"
+        android:layout_marginLeft="8dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="1dp"
+        android:text="2.4km"
+        android:textSize="16sp" />
+
+    <View
+        android:id="@+id/sep2"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/event_distance"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/myString"
+        android:layout_below="@+id/event_distance"
+        android:id="@+id/event_description"
+        android:textSize="16sp"
+        android:paddingBottom="16dp"/>
+    
+</RelativeLayout>

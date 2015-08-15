@@ -156,8 +156,8 @@ public class MapsFragment extends SupportMapFragment {
         if (location != null) {
             myLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
     }
 
     //Focuses zoom on to user

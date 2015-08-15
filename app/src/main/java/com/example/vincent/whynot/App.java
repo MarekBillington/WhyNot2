@@ -28,7 +28,7 @@ public class App extends Application{
     private static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
     private int offset = 0;
     private int eventsCount = 0;
-    public static double radiusLength = 2;
+    public static double radiusLength = 5;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
@@ -122,6 +122,13 @@ public class App extends Application{
     public void setEventsCount(int newEventsCount) {
         System.out.println("Testing: Setting Events count (should only happen once) = " + newEventsCount);
         eventsCount = newEventsCount;
+    }
+
+    public Event getEventByID(int id){
+        for(Event event: eventsArray){
+            if(Integer.parseInt(event.getId()) == id) return event;
+        }
+        return null;
     }
 
     public Location getUserLocation() {
