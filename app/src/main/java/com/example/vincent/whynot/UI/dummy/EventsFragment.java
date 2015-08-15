@@ -102,7 +102,7 @@ public class EventsFragment extends Fragment {
         card.setLayoutParams(params);
 
         TextView textView = (TextView) card.findViewById(R.id.event_description);
-        //textView.setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
 
 
     }

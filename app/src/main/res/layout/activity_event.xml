@@ -138,5 +138,5 @@
         android:id="@+id/event_description"
         android:textSize="16sp"
         android:paddingBottom="16dp"/>
-    
+
 </RelativeLayout>
