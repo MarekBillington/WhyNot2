@@ -65,7 +65,7 @@ public class MapsFragment extends SupportMapFragment {
     public void setUpMap() {
         mMap.setMyLocationEnabled(true);
 
-        centreMapOnUser();
+        //centreMapOnUser();
         //This code stops the map camera from focusing on the info window when clicking on a marker
         //however it also stops the direction buttons from appearing
 //        mMap.setOnMarkerClickListener(
@@ -145,7 +145,7 @@ public class MapsFragment extends SupportMapFragment {
        }
     }
 
-    public void centreMapOnUser(){
+    /*public void centreMapOnUser(){
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -156,9 +156,9 @@ public class MapsFragment extends SupportMapFragment {
         if (location != null) {
             myLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
         }
-    }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
+    }*/
 
     //Focuses zoom on to user
 

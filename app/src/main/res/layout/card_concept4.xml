@@ -15,7 +15,7 @@
         <TextView
             android:textStyle="bold"
             android:fontFamily="Arial"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:textColor="@android:color/darker_gray"
             android:background="#bb000000"
             android:id="@+id/event_category"
@@ -30,7 +30,7 @@
             android:textColor="@android:color/white"
             android:background="#bb000000"
             android:fontFamily="Arial"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:id="@+id/event_name"
             android:transitionName="name"
             android:minWidth="100dp"
@@ -51,7 +51,7 @@
             android:transitionName="price"
             android:textColor="#ffffff"
             android:background="#bb000000"
-            android:textSize="26sp"
+            android:textSize="20sp"
             android:padding="8dp"/>
 
     </RelativeLayout>
