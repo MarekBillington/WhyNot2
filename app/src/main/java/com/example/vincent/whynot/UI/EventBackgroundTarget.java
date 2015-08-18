@@ -18,6 +18,7 @@ import com.squareup.picasso.Target;
 /** Callback for loading image into event's background.
  *  These must be stored in a list until finished otherwise
  *  they will be garbage collected. */
+
 public class EventBackgroundTarget implements Target {
 
     private View banner;

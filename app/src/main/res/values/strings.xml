@@ -11,4 +11,6 @@
         dableListView class, but sometimes that option is overkill
         or unfit for our intents  purposes, and we may decide to roll out our own mechanism.</string>
     <string name="title_activity_event">EventActivity</string>
+
+    <string name="button_website_text">Website</string>
 </resources>

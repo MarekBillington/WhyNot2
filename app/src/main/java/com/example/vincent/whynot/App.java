@@ -25,10 +25,15 @@ public class App extends Application{
     public MainActivity myActivity;
     private Context myContext;
     private Location userLocation;
-    private static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
+
+    /** Buffer array holds all events until all async requests have finished.
+     * This means the app can still function while making requests. **/
+    public static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Event> bufferArray = new CopyOnWriteArrayList<>();
+
     private int offset = 0;
     private int eventsCount = 0;
-    public static double radiusLength = 5;
+    public static double radiusLength = 1;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
@@ -45,7 +50,6 @@ public class App extends Application{
         // Begin the chain of async tasks that will eventually
         // return the array of events to this App class
         startAsyncTaskChain();
-        eventsArray.clear();
     }
 
     // Set the global authentication credentials
@@ -59,11 +63,12 @@ public class App extends Application{
     }
 
     // begin the async task chain that will end with building the events array
-    private void startAsyncTaskChain() {
+    public void startAsyncTaskChain() {
         // Initial async task that finds out where the user is located,
         // additional async task for requesting the data and parsing
         // the returned xml file are initialised within each preceding
         // async task in a chain like format
+        bufferArray.clear();
         getUserLocationFromGPS();
     }
 
@@ -104,14 +109,19 @@ public class App extends Application{
         this.userLocation = newLocation;
     }
 
-    public void setEventsArray(CopyOnWriteArrayList<Event> newEventsArray) {
-        eventsArray = newEventsArray;
+    public void setBufferArray(CopyOnWriteArrayList<Event> newEventsArray) {
+        bufferArray = newEventsArray;
     }
 
-    public void appendEvents(CopyOnWriteArrayList<Event> newEventsArray) {
+    public void appendToBuffer(CopyOnWriteArrayList<Event> newEventsArray) {
         for (Event event : newEventsArray) {
-            eventsArray.add(event);
+            bufferArray.add(event);
         }
+    }
+
+    public void transferEventsFromBuffer(){
+        eventsArray = new CopyOnWriteArrayList<>(bufferArray);
+        //bufferArray.clear();
     }
 
     public void setOffset(int newOffset) {

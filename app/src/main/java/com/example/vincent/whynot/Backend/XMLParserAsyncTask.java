@@ -61,6 +61,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
             System.out.println("Testing: Thread" + offset / 20 + " has offset + 20 larger than " +
                     "or equal to the number of events (offset = " + offset + ", events count = " +
                     myApp.getEventsCount() + "). Calling update from events :)");
+            myApp.transferEventsFromBuffer();
             myApp.myActivity.updateFromEvents(myApp);
             myApp.setOffset(0);
         }
@@ -110,6 +111,8 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     Node desc = event.getElementsByTagName("description").item(0);
                     eventObject.setDescription(desc.getTextContent());
 
+                    Node restrictions = event.getElementsByTagName("restrictions").item(0);
+                    eventObject.setRestrictions(restrictions.getTextContent());
 
                     eventObject.setDt_start(startDate);
 
@@ -197,11 +200,11 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         }
 
         if (myApp.getEventsArray() == null) {
-            myApp.setEventsArray(myEvents);
+            myApp.setBufferArray(myEvents);
             System.out.println("Testing: Thread " + offset / 20 + " adding " +
                     myEvents.size() + " events to the events array");
         } else {
-            myApp.appendEvents(myEvents);
+            myApp.appendToBuffer(myEvents);
             System.out.println("Testing: Thread " + offset / 20 + " appending " +
                     myEvents.size() + " events to the events array");
         }
@@ -291,10 +294,10 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
         }
 
         if (myApp.getEventsArray() == null) {
-            myApp.setEventsArray(myEvents);
+            myApp.setBufferArray(myEvents);
             System.out.println("Testing: Appending " + myEvents.size() + " events to the events array");
         } else {
-            myApp.appendEvents(myEvents);
+            myApp.appendToBuffer(myEvents);
             System.out.println("Testing: Appending " + myEvents.size() + " events to the events array");
         }
     }

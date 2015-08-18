@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.dummy.SlidingTabLayout;
@@ -34,6 +35,7 @@ public class MainActivity extends FragmentActivity {
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout tabs;
+    private PullRefreshLayout pullToRefreshLayout;
 
     private static final CharSequence TITLES[] = {"Events", "Map"};
     private static final int NUMBOFTABS = 2;
@@ -72,10 +74,13 @@ public class MainActivity extends FragmentActivity {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
         adapter.setLoading();
+
+        //initialisePullToRefresh();
     }
 
-    /** After events have been recieved, update both the list and maps fragments. **/
+    /** After events have been recieved, stop refreshing, update both the list and maps fragments. **/
     public void updateFromEvents(App app){
+//        pullToRefreshLayout.setRefreshing(false);
         adapter.getMapsFragment().placeMarkers(app);
         adapter.updateList();
     }
@@ -85,7 +90,7 @@ public class MainActivity extends FragmentActivity {
         View parent = (ViewGroup)view.getParent();
         TextView textView = (TextView) parent.findViewById(R.id.event_description);
         ImageView expand = (ImageView) parent.findViewById(R.id.expand_view);
-        View separator = (View) parent.findViewById(R.id.sep1);
+        View separator = parent.findViewById(R.id.sep1);
 
         if(textView.isShown()){
             com.example.vincent.whynot.UI.Fx.slide_up(this, textView);
@@ -113,5 +118,19 @@ public class MainActivity extends FragmentActivity {
     public void switchToMaps(Location location){
         tabs.switchToTab(1);
         adapter.getMapsFragment().centreMapOnLocation(location);
+    }
+
+    /** Initialises the pull to refresh layout. **/
+    private void initialisePullToRefresh(){
+        pullToRefreshLayout = (PullRefreshLayout) findViewById(R.id.pullToRefreshLayout);
+        pullToRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Send another request for all the events.
+                applicationData.startAsyncTaskChain();
+            }
+        });
+        // For now, the app will be refreshing from the start
+        pullToRefreshLayout.setRefreshing(true);
     }
 }

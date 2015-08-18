@@ -64,7 +64,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setLoading(){
-        if(listFragment != null) listFragment.addLoadingItem();
+
     }
 
     public void updateList(){

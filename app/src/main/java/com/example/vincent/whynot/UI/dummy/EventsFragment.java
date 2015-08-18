@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.CardView;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.Event;
@@ -49,6 +51,7 @@ public class EventsFragment extends Fragment {
     LayoutInflater inflater;
     LinearLayout layout;
     private MainActivity mainActivity = null;
+    private PullRefreshLayout pullToRefreshLayout;
 
     // To hold strong references to the targets so that they don't get garbage collected.
     private ArrayList<Target> targets = new ArrayList<>();
@@ -67,25 +70,24 @@ public class EventsFragment extends Fragment {
         this.context = view.getContext();
         this.container = container;
 
+        initialisePullToRefresh(view);
+
         return view;
     }
 
     /** Remove all event item in the list and re add them. **/
     public void updateList(App app){
+        pullToRefreshLayout.setRefreshing(false);
+        layout.removeAllViews();
         layout.removeViewsInLayout(0, layout.getChildCount());
-        displaySurface(app.getEventsArray(), layout, inflater);
+        displaySurface(App.eventsArray, layout, inflater);
     }
 
-    public void addLoadingItem(){
-
-        View card = this.inflater.inflate(R.layout.fragment_splash, container);
-        this.layout.addView(card);
-    }
 
     public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
 
         for (int i = 0; i < eventArrayList.size(); i++){
-            View card = inflater.inflate(R.layout.card_concept4, null);
+            View card =  inflater.inflate(R.layout.card_concept4, null);
             final Event event = eventArrayList.get(i);
             setUpCard(card, event);
             formatCard(card);
@@ -108,6 +110,7 @@ public class EventsFragment extends Fragment {
     }
 
     public void setUpCard(View card, final Event event){
+        CardView cardView = (CardView) card.findViewById(R.id.card_view);
         final TextView event_price = (TextView) card.findViewById(R.id.event_price);
         event_price.setText(event.getCheapest());
 
@@ -117,7 +120,6 @@ public class EventsFragment extends Fragment {
         final View cont = card.findViewById(R.id.image_container);
 
         final TextView event_name = (TextView) card.findViewById(R.id.event_name);
-        String eventName = event.getName();
         event_name.setText(event.formatName());
 
         final TextView event_distance = (TextView) card.findViewById(R.id.event_distance);
@@ -162,7 +164,7 @@ public class EventsFragment extends Fragment {
         final View compass = card.findViewById(R.id.imageView);
 
         // Open the event in an event activity if the banner is clicked on
-        banner.setOnClickListener(new View.OnClickListener() {
+        cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openEventActivity(event, cont, event_name, event_price, event_category, eventAddress, event_distance, event_time, compass);
@@ -193,11 +195,24 @@ public class EventsFragment extends Fragment {
         this.mainActivity = mainActivity;
     }
 
-
+    /** Initialises the pull to refresh layout. **/
+    private void initialisePullToRefresh(View view){
+        pullToRefreshLayout = (PullRefreshLayout) view.findViewById(R.id.pullToRefreshLayout);
+        pullToRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Send another request for all the events.
+                mainActivity.applicationData.startAsyncTaskChain();
+            }
+        });
+        // For now, the app will be refreshing from the start
+        pullToRefreshLayout.setRefreshing(true);
+    }
 
     private void openEventActivity(Event event, View container, View name, View price, View category, View location,
                                    View distance, View time, View compass){
         Intent intent = new Intent(mainActivity, EventActivity.class);
+        intent.putExtra("id", event.getId());
         // Pass data object in the bundle and populate details activity.
 
         // Only animate with transitions if SDK 21 or above
@@ -206,7 +221,7 @@ public class EventsFragment extends Fragment {
                     makeSceneTransitionAnimation(mainActivity, Pair.create(container, "container"), Pair.create(name, "name"),
                             Pair.create(price, "price"),Pair.create(category, "category"), Pair.create(location, "location"),
                             Pair.create(distance, "distance"),  Pair.create(time, "time"),  Pair.create(compass, "compass"));
-            intent.putExtra("id", event.getId());
+
             mainActivity.startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);

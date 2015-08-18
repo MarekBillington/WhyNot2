@@ -135,7 +135,7 @@ public class MapsFragment extends SupportMapFragment {
 
     /** Places all the event markers on the map. */
     public void placeMarkers(App app){
-
+        mMap.clear();
        for(Event e: app.getEventsArray()) {
            mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(e.getLatitude(), e.getLongitude()))

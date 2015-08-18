@@ -1,11 +1,17 @@
 package com.example.vincent.whynot.UI;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,8 +24,12 @@ public class EventActivity extends AppCompatActivity {
     /** A large more descriptive view of each activity. **/
 
     private TextView nameTextView, categoryTextView, priceTextView, descriptionTextView,
-                     distanceTextView, addressTextView, timeTextView;
+                     distanceTextView, addressTextView, timeTextView, restrictionsTextView,
+            websiteTextView;
+    private ImageView websiteButton;
     private RelativeLayout banner;
+
+    private Context context;
 
     private Event event;
 
@@ -30,6 +40,8 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        this.context = getApplicationContext();
+
         Bundle bundle = getIntent().getExtras();
         int eventId = Integer.parseInt(bundle.getString("id"));
         event = MainActivity.applicationData.getEventByID(eventId);
@@ -37,6 +49,7 @@ public class EventActivity extends AppCompatActivity {
         initialiseViews();
     }
 
+    /** Initialise all the EventActivity's views. t**/
     private void initialiseViews(){
         priceTextView = (TextView) findViewById(R.id.event_price);
         priceTextView.setText(event.getCheapest());
@@ -53,8 +66,10 @@ public class EventActivity extends AppCompatActivity {
         distanceTextView.setText(distanceString + "km away");
 
         addressTextView = (TextView) findViewById(R.id.event_location);
-        String address = event.getLocation();
-        addressTextView.setText(address);
+        addressTextView.setText("at " + event.getLocation());
+
+        restrictionsTextView = (TextView) findViewById(R.id.event_restrictions);
+        restrictionsTextView.setText("Event rated: " + event.getRestrictions());
 //
 //        // Change to maps fragment and go to location
 //        final Location eventLocation = new Location("");
@@ -82,9 +97,21 @@ public class EventActivity extends AppCompatActivity {
         timeTextView = (TextView) findViewById(R.id.event_time);
         timeTextView.setText(event.formatTime());
 
+        websiteButton = (ImageView) findViewById(R.id.button_website);
+        websiteButton.setOnClickListener(websiteOnClickListener);
+        websiteTextView = (TextView) findViewById(R.id.text_website);
+        websiteTextView.setOnClickListener(websiteOnClickListener);
+
         banner = (RelativeLayout) findViewById(R.id.image_container);
         setEventImage(banner, event);
     }
+
+    private View.OnClickListener websiteOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            openWebsite();
+        }
+    };
 
 
     /** Sets an image to the background using Picasso, if event doesn't have an image.
@@ -102,6 +129,15 @@ public class EventActivity extends AppCompatActivity {
             else if(event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES) banner.setBackgroundResource(R.drawable.workshop);
             else if(event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE) banner.setBackgroundResource(R.drawable.festivals);
         }
+    }
+
+    /** Opens the eventfinda website link. **/
+    private void openWebsite(){
+        Intent viewIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(event.getWebpage()));
+        viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(viewIntent);
+        supportFinishAfterTransition();
     }
 
     @Override

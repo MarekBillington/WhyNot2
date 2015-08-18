@@ -29,5 +29,6 @@ dependencies {
     compile 'com.android.support:support-v4:22.+'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-
+    compile 'com.baoyz.pullrefreshlayout:library:1.0.1'
+    compile 'com.android.support:cardview-v7:21.0.+'
 }
