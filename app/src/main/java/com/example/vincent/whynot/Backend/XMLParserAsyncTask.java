@@ -33,7 +33,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
     private App myApp;
     private String eventsString;
     private int offset;
-    CopyOnWriteArrayList<Event> myEvents = new CopyOnWriteArrayList<Event>();
+    private CopyOnWriteArrayList<Event> myEvents = new CopyOnWriteArrayList<Event>();
 
     public XMLParserAsyncTask(App app, String eventsString, int asyncTaskOffset) {
         myApp = app;
@@ -98,11 +98,10 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     Node category = event.getElementsByTagName("category").item(0);
                     NodeList categoryNodeList = category.getChildNodes();
                     for (int j = 0; j < categoryNodeList.getLength(); j++) {
-                        if (categoryNodeList.item(j).getNodeName().equals("parent_id"))
+                        if (categoryNodeList.item(j).getNodeName().equals("parent_id")) {
                             eventObject.setCategory(Integer.parseInt(categoryNodeList.item(j).getTextContent()));
-
-                       // if (categoryNodeList.item(j).getNodeName().equals("name"))
-                        //   eventObject.setCategory(categoryNodeList.item(j).getTextContent());
+                            break;
+                        }
                     }
 
                     Node dt_start = event.getElementsByTagName("datetime_start").item(0);
@@ -133,6 +132,18 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     eventObject.setLongitude(Float.parseFloat(lng.getTextContent()));
 
                     eventObject.setDistance();
+
+                    // We can only access the booking website once we get full Eventfinda api access
+                    Node bookingWebsite = event.getElementsByTagName("booking_web_site").item(0);
+                    if (bookingWebsite != null) {
+                        NodeList bookingWebsiteList = bookingWebsite.getChildNodes();
+                        for (int j = 0; j < bookingWebsiteList.getLength(); j++) {
+                            if (bookingWebsiteList.item(j).getNodeName().equals("url")) {
+                                eventObject.setTicketUrl(bookingWebsiteList.item(j).getTextContent());
+                                break;
+                            }
+                        }
+                    } else eventObject.setTicketUrl("");
 
                     Node free = event.getElementsByTagName("is_free").item(0);
                     if (free.getTextContent().equals("1")) eventObject.setCheapest("Free");

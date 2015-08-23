@@ -21,12 +21,13 @@ import com.squareup.picasso.Target;
 
 public class EventActivity extends AppCompatActivity {
 
-    /** A large more descriptive view of each activity. **/
+    /**
+     * A large more descriptive view of each activity.
+     **/
 
-    private TextView nameTextView, categoryTextView, priceTextView, descriptionTextView,
-                     distanceTextView, addressTextView, timeTextView, restrictionsTextView,
-            websiteTextView;
-    private ImageView websiteButton;
+    private TextView nameTextView, categoryTextView, descriptionTextView, distanceTextView,
+            addressTextView, timeTextView, restrictionsTextView, websiteTextView, ticketTextView;
+    private ImageView websiteButton, ticketButton;
     private RelativeLayout banner;
 
     private Context context;
@@ -49,11 +50,10 @@ public class EventActivity extends AppCompatActivity {
         initialiseViews();
     }
 
-    /** Initialise all the EventActivity's views. t**/
-    private void initialiseViews(){
-        priceTextView = (TextView) findViewById(R.id.event_price);
-        priceTextView.setText(event.getCheapest());
-
+    /**
+     * Initialise all the EventActivity's views. t
+     **/
+    private void initialiseViews() {
         categoryTextView = (TextView) findViewById(R.id.event_category);
         categoryTextView.setText(event.getCategoryString());
 
@@ -61,8 +61,9 @@ public class EventActivity extends AppCompatActivity {
         nameTextView.setText(event.formatName());
 
         distanceTextView = (TextView) findViewById(R.id.event_distance);
-        float distance = Float.parseFloat(event.getDistance())/1000;
-        String distanceString = String.format("%.01f", distance);;
+        float distance = Float.parseFloat(event.getDistance()) / 1000;
+        String distanceString = String.format("%.01f", distance);
+        ;
         distanceTextView.setText(distanceString + "km away");
 
         addressTextView = (TextView) findViewById(R.id.event_location);
@@ -97,44 +98,71 @@ public class EventActivity extends AppCompatActivity {
         timeTextView = (TextView) findViewById(R.id.event_time);
         timeTextView.setText(event.formatTime());
 
-        websiteButton = (ImageView) findViewById(R.id.button_website);
-        websiteButton.setOnClickListener(websiteOnClickListener);
-        websiteTextView = (TextView) findViewById(R.id.text_website);
-        websiteTextView.setOnClickListener(websiteOnClickListener);
+        initialiseBottomButtons();
 
         banner = (RelativeLayout) findViewById(R.id.image_container);
         setEventImage(banner, event);
     }
 
+    private void initialiseBottomButtons() {
+        websiteButton = (ImageView) findViewById(R.id.button_website);
+        websiteButton.setOnClickListener(websiteOnClickListener);
+        websiteTextView = (TextView) findViewById(R.id.text_website);
+        websiteTextView.setOnClickListener(websiteOnClickListener);
+
+        ticketButton = (ImageView) findViewById(R.id.button_ticket);
+        ticketButton.setOnClickListener(ticketOnClickListener);
+        ticketTextView = (TextView) findViewById(R.id.text_tickets);
+        ticketTextView.setOnClickListener(ticketOnClickListener);
+    }
+
     private View.OnClickListener websiteOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            openWebsite();
+            openWebsite(event.getWebpage());
+        }
+    };
+
+    private View.OnClickListener ticketOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!event.getTicketUrl().equals(""))
+                openWebsite(event.getTicketUrl());
         }
     };
 
 
-    /** Sets an image to the background using Picasso, if event doesn't have an image.
-     *  it will assign a generic image instead. **/
-    public void setEventImage(View banner, Event event){
+    /**
+     * Sets an image to the background using Picasso, if event doesn't have an image.
+     * it will assign a generic image instead.
+     **/
+    public void setEventImage(View banner, Event event) {
         EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(getApplicationContext(), banner);
-        if(!event.getImg_url().isEmpty()) {
+        if (!event.getImg_url().isEmpty()) {
             Picasso.with(this).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
             target = eventBackgroundTarget;
-        }else{
-            if(event.getCategory() == Event.CATEGORY_CONCERTS_GIG) banner.setBackgroundResource(R.drawable.gigs);
-            else if(event.getCategory() == Event.CATEGORY_EXHIBITIONS) banner.setBackgroundResource(R.drawable.exhibition);
-            else if(event.getCategory() == Event.CATEGORY_PERFORMING_ARTS) banner.setBackgroundResource(R.drawable.perform_arts);
-            else if(event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS) banner.setBackgroundResource(R.drawable.sports);
-            else if(event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES) banner.setBackgroundResource(R.drawable.workshop);
-            else if(event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE) banner.setBackgroundResource(R.drawable.festivals);
+        } else {
+            if (event.getCategory() == Event.CATEGORY_CONCERTS_GIG)
+                banner.setBackgroundResource(R.drawable.gigs);
+            else if (event.getCategory() == Event.CATEGORY_EXHIBITIONS)
+                banner.setBackgroundResource(R.drawable.exhibition);
+            else if (event.getCategory() == Event.CATEGORY_PERFORMING_ARTS)
+                banner.setBackgroundResource(R.drawable.perform_arts);
+            else if (event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS)
+                banner.setBackgroundResource(R.drawable.sports);
+            else if (event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES)
+                banner.setBackgroundResource(R.drawable.workshop);
+            else if (event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE)
+                banner.setBackgroundResource(R.drawable.festivals);
         }
     }
 
-    /** Opens the eventfinda website link. **/
-    private void openWebsite(){
+    /**
+     * Opens the eventfinda or booking website link.
+     **/
+    private void openWebsite(String url) {
         Intent viewIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(event.getWebpage()));
+                Uri.parse(url));
         viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(viewIntent);
         supportFinishAfterTransition();
@@ -160,10 +188,5 @@ public class EventActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onStop(){
-        super.onStop();
-        supportFinishAfterTransition();
     }
 }

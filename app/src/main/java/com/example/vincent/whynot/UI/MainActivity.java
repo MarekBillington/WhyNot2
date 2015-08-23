@@ -1,6 +1,7 @@
 package com.example.vincent.whynot.UI;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
+import com.example.vincent.whynot.UI.dummy.EventsFragment;
+import com.example.vincent.whynot.UI.dummy.MapsFragment;
 import com.example.vincent.whynot.UI.dummy.SlidingTabLayout;
 import com.example.vincent.whynot.UI.dummy.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
@@ -28,29 +32,33 @@ import com.squareup.picasso.Picasso;
  * on a map.
  */
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements EventsFragment.EventsFragmentListener {
 
     public static FragmentManager fragmentManager;
 
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout tabs;
-    private PullRefreshLayout pullToRefreshLayout;
 
     private static final CharSequence TITLES[] = {"Events", "Map"};
     private static final int NUMBOFTABS = 2;
 
-    public static App applicationData;
+    public static App applicationData = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
-        applicationData = new App(getApplicationContext(), this);
+        
+        if(applicationData == null) {
+            applicationData = new App(getApplicationContext(), this);
+        }
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, TITLES fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(applicationData, this,fragmentManager, TITLES, NUMBOFTABS);
@@ -73,37 +81,13 @@ public class MainActivity extends FragmentActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-        adapter.setLoading();
 
-        //initialisePullToRefresh();
     }
 
     /** After events have been recieved, stop refreshing, update both the list and maps fragments. **/
     public void updateFromEvents(App app){
-//        pullToRefreshLayout.setRefreshing(false);
         adapter.getMapsFragment().placeMarkers(app);
         adapter.updateList();
-    }
-
-    /** Expand the card to show it's description. **/
-    public void expandCard(View view){
-        View parent = (ViewGroup)view.getParent();
-        TextView textView = (TextView) parent.findViewById(R.id.event_description);
-        ImageView expand = (ImageView) parent.findViewById(R.id.expand_view);
-        View separator = parent.findViewById(R.id.sep1);
-
-        if(textView.isShown()){
-            com.example.vincent.whynot.UI.Fx.slide_up(this, textView);
-            textView.setVisibility(View.GONE);
-            separator.setVisibility(View.GONE);
-            expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
-        }
-        else{
-            com.example.vincent.whynot.UI.Fx.slide_down(this, textView);
-            textView.setVisibility(View.VISIBLE);
-            separator.setVisibility(View.VISIBLE);
-            expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
-        }
     }
 
    /** Start an intent to send an SMS. **/
@@ -117,20 +101,10 @@ public class MainActivity extends FragmentActivity {
     /** Switches to maps fragment and zooms on a particular location   **/
     public void switchToMaps(Location location){
         tabs.switchToTab(1);
-        adapter.getMapsFragment().centreMapOnLocation(location);
+        MapsFragment.centreMapOnLocation(location);
     }
 
-    /** Initialises the pull to refresh layout. **/
-    private void initialisePullToRefresh(){
-        pullToRefreshLayout = (PullRefreshLayout) findViewById(R.id.pullToRefreshLayout);
-        pullToRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Send another request for all the events.
-                applicationData.startAsyncTaskChain();
-            }
-        });
-        // For now, the app will be refreshing from the start
-        pullToRefreshLayout.setRefreshing(true);
+    public void setRefreshing(){
+        adapter.getListFragment().setRefreshing(true);
     }
 }

@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="8dp"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground">
 
@@ -61,7 +62,6 @@
             android:layout_alignParentRight="true"
             android:text="$20"
             android:id="@+id/event_price"
-            android:transitionName="price"
             android:textColor="#ffffff"
             android:background="#bb000000"
             android:textSize="20sp"
@@ -105,6 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/event_location"
         android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/ic_explore_black_24dp"></ImageView>
 
     <TextView
@@ -120,46 +121,6 @@
         android:paddingTop="1dp"
         android:text="2.4km"
         android:textSize="16sp" />
-
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignRight="@id/event_time"
-        android:layout_alignTop="@id/event_distance"
-        android:layout_below="@id/event_time"
-        android:src="@drawable/ic_expand_more_black_24dp"
-        android:id="@+id/expand_view"
-        android:onClick="expandCard"/>
-    <View
-        android:id="@+id/sep1"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@id/event_distance"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:visibility="gone"
-        android:background="@android:color/darker_gray" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/myString"
-        android:layout_toLeftOf="@id/event_expand"
-        android:layout_below="@+id/event_distance"
-        android:id="@+id/event_description"
-        android:textSize="16sp"
-        android:paddingBottom="16dp"/>
 
         </RelativeLayout>
 

@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
     tools:context="com.example.vincent.whynot.UI.EventActivity">
 
     <RelativeLayout
@@ -8,19 +9,7 @@
         android:transitionName="container"
         android:background="@drawable/gigs"
         android:layout_width="match_parent"
-        android:layout_height="180dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="$20"
-            android:id="@+id/event_price"
-            android:transitionName="price"
-            android:textColor="#ffffff"
-            android:background="#bb000000"
-            android:textSize="26sp"
-            android:padding="8dp"/>
+        android:layout_height="160dp">
 
     </RelativeLayout>
 
@@ -166,31 +155,33 @@
         android:id="@+id/sep3"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_above="@+id/button_website"
+        android:layout_above="@+id/layout_buttons"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:background="@android:color/darker_gray"/>
 
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentBottom="true">
 
     <ImageView
         android:id="@+id/button_website"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_description"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_alignParentBottom="true"
+        android:layout_marginRight="4dp"
         android:src="@drawable/ic_open_in_new_black_36dp"></ImageView>
 
     <TextView
         android:id="@+id/text_website"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_description"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/button_website"
         android:gravity="center_vertical"
         android:layout_marginTop="8dp"
         android:text="Website"
@@ -200,23 +191,17 @@
             android:id="@+id/button_ticket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/event_description"
-            android:layout_toRightOf="@id/text_website"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="8dp"
-            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
             android:src="@drawable/ic_bookmark_black_36dp"></ImageView>
 
     <TextView
         android:id="@+id/text_tickets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_description"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/button_ticket"
         android:gravity="center_vertical"
         android:layout_marginTop="8dp"
-        android:text="Buy Tickets"
+        android:text="Tickets"
         android:textSize="16sp" />
-
+    </LinearLayout>
 </RelativeLayout>

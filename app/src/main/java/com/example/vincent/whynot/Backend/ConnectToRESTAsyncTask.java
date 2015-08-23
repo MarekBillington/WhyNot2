@@ -37,7 +37,6 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
         offset = asyncTaskOffset;
     }
 
-    // Overridden class methods
 
     @Override
     protected String doInBackground(Void... params) {

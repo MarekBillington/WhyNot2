@@ -3,197 +3,96 @@ package com.example.vincent.whynot.UI.dummy;
 /**
  * Created by George on 8/8/2015.
  */
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
-import android.support.v7.widget.CardView;
-import android.text.Layout;
-import android.util.Log;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.view.WindowManager;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
-import com.example.vincent.whynot.UI.Event;
-import com.example.vincent.whynot.UI.EventActivity;
-import com.example.vincent.whynot.UI.EventBackgroundTarget;
+import com.example.vincent.whynot.UI.EventsAdapter;
 import com.example.vincent.whynot.UI.MainActivity;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by hp1 on 21-01-2015.
+ *  Fragment which contains a recyclerview, listing all the individual event cards.
  */
 public class EventsFragment extends Fragment {
 
-    float historicX = Float.NaN, historicY = Float.NaN;
-    static final int DELTA = 50;
-    enum Direction {LEFT, RIGHT;}
-    LayoutInflater inflater;
-    LinearLayout layout;
     private MainActivity mainActivity = null;
+    private Context context;
     private PullRefreshLayout pullToRefreshLayout;
 
-    // To hold strong references to the targets so that they don't get garbage collected.
-    private ArrayList<Target> targets = new ArrayList<>();
+    /** Recycler view variables. **/
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private EventsAdapter eventsAdapter;
 
-    public static String colours[] = {"#FF3A3A", "#9737CC", "#f3E6BC","#59E734","#FFE23A","#2CC1C1"};
-    private Context context;
-    private ViewGroup container;
+    private EventsFragmentListener mapsCallback;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =inflater.inflate(R.layout.tab_1,container,false);
+        View view =inflater.inflate(R.layout.fragment_events,container,false);
 
-        this.inflater = inflater;
-        this.layout = (LinearLayout) view.findViewById(R.id.tabLinearLayout);
         this.context = view.getContext();
-        this.container = container;
-
+        setRetainInstance(true);
+        initialiseRecycleView(view);
         initialisePullToRefresh(view);
 
         return view;
     }
 
-    /** Remove all event item in the list and re add them. **/
-    public void updateList(App app){
-        pullToRefreshLayout.setRefreshing(false);
-        layout.removeAllViews();
-        layout.removeViewsInLayout(0, layout.getChildCount());
-        displaySurface(App.eventsArray, layout, inflater);
-    }
-
-
-    public void displaySurface(CopyOnWriteArrayList<Event> eventArrayList, LinearLayout tabLinearLayout, LayoutInflater inflater){
-
-        for (int i = 0; i < eventArrayList.size(); i++){
-            View card =  inflater.inflate(R.layout.card_concept4, null);
-            final Event event = eventArrayList.get(i);
-            setUpCard(card, event);
-            formatCard(card);
-            tabLinearLayout.addView(card);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mapsCallback = (EventsFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement TextClicked");
         }
     }
 
-    public void formatCard(View card){
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-        );
-        params.setMargins(0 ,16, 0, 16);
-        card.setLayoutParams(params);
+    private void initialiseRecycleView(View view){
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        TextView textView = (TextView) card.findViewById(R.id.event_description);
-        textView.setVisibility(View.GONE);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
 
+        // If screen is in portrait, use a linear layout, in landscape use a  gridlayout
+        int orientation = getActivity().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            layoutManager = new LinearLayoutManager(context);
+        else
+            layoutManager = new GridLayoutManager(context, 2);
 
+        recyclerView.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        eventsAdapter = new EventsAdapter(getActivity(), this);
+        recyclerView.setAdapter(eventsAdapter);
+
+        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(0));
     }
 
-    public void setUpCard(View card, final Event event){
-        CardView cardView = (CardView) card.findViewById(R.id.card_view);
-        final TextView event_price = (TextView) card.findViewById(R.id.event_price);
-        event_price.setText(event.getCheapest());
-
-        final TextView event_category = (TextView) card.findViewById(R.id.event_category);
-        event_category.setText(event.getCategoryString());//(event.getCheapest());
-
-        final View cont = card.findViewById(R.id.image_container);
-
-        final TextView event_name = (TextView) card.findViewById(R.id.event_name);
-        event_name.setText(event.formatName());
-
-        final TextView event_distance = (TextView) card.findViewById(R.id.event_distance);
-        float distance = Float.parseFloat(event.getDistance())/1000;
-        String distanceString = String.format("%.01f", distance);;
-        event_distance.setText(distanceString + "km away");
-
-        final TextView eventAddress = (TextView) card.findViewById(R.id.event_location);
-        String address = event.getLocation();
-        eventAddress.setText(address);
-
-        // Change to maps fragment and go to location
-        final Location eventLocation = new Location("");
-
-        eventLocation.setLatitude(event.getLatitude());
-        eventLocation.setLongitude(event.getLongitude());
-        event_distance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainActivity.switchToMaps(eventLocation);
-            }
-        });
-
-        card.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainActivity.switchToMaps(eventLocation);
-            }
-        });
-
-        final TextView event_description = (TextView) card.findViewById(R.id.event_description);
-        event_description.setText(event.getDescription());
-
-        // Only get the time, not the date
-        final TextView event_time = (TextView) card.findViewById(R.id.event_time);
-        String time = event.getDt_start().substring(event.getDt_start().length() - 9, event.getDt_start().length() - 3);
-        event_time.setText(event.formatTime());
-
-        final RelativeLayout banner = (RelativeLayout) card.findViewById(R.id.image_container);
-        setEventImage(banner, event);
-
-        final View compass = card.findViewById(R.id.imageView);
-
-        // Open the event in an event activity if the banner is clicked on
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openEventActivity(event, cont, event_name, event_price, event_category, eventAddress, event_distance, event_time, compass);
-            }
-        });
-
+    public void openLocation(Location location){
+        mapsCallback.switchToMaps(location);
     }
 
-    /** Sets an image to the background using Picasso, if event doesn't have an image.
-     *  it will assign a generic image instead. **/
-    public void setEventImage(View banner, Event event){
-        EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(context, banner);
-        if(!event.getImg_url().isEmpty()) {
-            Picasso.with(getActivity()).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
-            targets.add(eventBackgroundTarget);
-        }else{
-            if(event.getCategory() == Event.CATEGORY_CONCERTS_GIG) banner.setBackgroundResource(R.drawable.gigs);
-            else if(event.getCategory() == Event.CATEGORY_EXHIBITIONS) banner.setBackgroundResource(R.drawable.exhibition);
-            else if(event.getCategory() == Event.CATEGORY_PERFORMING_ARTS) banner.setBackgroundResource(R.drawable.perform_arts);
-            else if(event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS) banner.setBackgroundResource(R.drawable.sports);
-            else if(event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES) banner.setBackgroundResource(R.drawable.workshop);
-            else if(event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE) banner.setBackgroundResource(R.drawable.festivals);
-        }
-    }
-
-
-    public void setMainActivity(MainActivity mainActivity){
-        this.mainActivity = mainActivity;
-    }
 
     /** Initialises the pull to refresh layout. **/
     private void initialisePullToRefresh(View view){
@@ -206,28 +105,49 @@ public class EventsFragment extends Fragment {
             }
         });
         // For now, the app will be refreshing from the start
-        pullToRefreshLayout.setRefreshing(true);
+        if (App.eventsArray.isEmpty()) setRefreshing(true);
     }
 
-    private void openEventActivity(Event event, View container, View name, View price, View category, View location,
-                                   View distance, View time, View compass){
-        Intent intent = new Intent(mainActivity, EventActivity.class);
-        intent.putExtra("id", event.getId());
-        // Pass data object in the bundle and populate details activity.
+    public void setRefreshing(boolean refreshing){
+        pullToRefreshLayout.setRefreshing(refreshing);
+    }
 
-        // Only animate with transitions if SDK 21 or above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(mainActivity, Pair.create(container, "container"), Pair.create(name, "name"),
-                            Pair.create(price, "price"),Pair.create(category, "category"), Pair.create(location, "location"),
-                            Pair.create(distance, "distance"),  Pair.create(time, "time"),  Pair.create(compass, "compass"));
+    /** Remove all event item in the list and re add them. **/
+    public void updateList(App app){
+        pullToRefreshLayout.setRefreshing(false);
+    }
 
-            mainActivity.startActivity(intent, options.toBundle());
-        } else {
-            startActivity(intent);
-            System.out.println("Testing:  SDK too low for transitions");
+    public void setMainActivity(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
+
+
+
+    /**
+     * Spacing for the Recyclerview
+     */
+    public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+
+        private final int mVerticalSpaceHeight;
+
+        public VerticalSpaceItemDecoration(int mVerticalSpaceHeight) {
+            this.mVerticalSpaceHeight = mVerticalSpaceHeight;
         }
 
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.bottom = mVerticalSpaceHeight;
+            outRect.left = mVerticalSpaceHeight;
+            outRect.right = mVerticalSpaceHeight;
+        }
     }
+
+
+    /** Listener for interacting with the MainActivity. **/
+    public interface EventsFragmentListener{
+        public void switchToMaps(Location location);
+    }
+
 
 }

@@ -1,9 +1,13 @@
 package com.example.vincent.whynot.UI;
 
 
+import android.graphics.Bitmap;
 import android.location.Location;
 
 import com.example.vincent.whynot.App;
+import com.example.vincent.whynot.R;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,6 +36,7 @@ public class Event {
     private boolean free;
     private String restrictions;
     private String img_url;
+    private String ticketUrl;
     private String distanceTo;
     private String cheapest;
     private String webpage;
@@ -156,6 +161,20 @@ public class Event {
         return this.location;
     }
 
+    /** Removes the city name out of the location string. **/
+    public String getLocationShort(){
+        String[] parts = this.location.split(",");
+        String shortened = "";
+        if(parts.length > 1) {
+            for (int i = 0; i < parts.length - 1; i++) {
+                shortened += parts[i];
+            }
+        } else shortened = parts[0];
+        if (shortened.length() > 35) shortened = shortened.substring(0, 35) + "...";
+
+        return shortened;
+    }
+
     public String getRestrictions(){
         return this.restrictions;
     }
@@ -182,11 +201,18 @@ public class Event {
         return this.distanceTo ;
     }
 
+    public String getTicketUrl() {
+        return ticketUrl;
+    }
 
-    /** Returns the name of the event to a max length of 35 chars. **/
+    public void setTicketUrl(String ticketUrl) {
+        this.ticketUrl = ticketUrl;
+    }
+
+    /** Returns the name of the event to a max length of 50 chars. **/
     public String formatName(){
-        if (name.length() > 35){
-            return name.substring(0, 35) + "...";
+        if (name.length() > 50){
+            return name.substring(0, 50) + "...";
         } else{
             return name;
         }
@@ -291,6 +317,7 @@ public class Event {
         return output;
     }
 
+    /** Strips CDATA tag off of XML text. **/
     public String stripCDATA(String s) {
         s = s.trim();
         if (s.startsWith("<![CDATA[")) {
@@ -303,6 +330,22 @@ public class Event {
         }
         return s;
     }
+
+    /** Returns the correct marker based on the Event's category. **/
+    public BitmapDescriptor getMarker(){
+        BitmapDescriptor marker = null;
+
+        if(this.category == CATEGORY_CONCERTS_GIG) marker = BitmapDescriptorFactory.fromResource(R.drawable.gig_marker);
+        else if(this.category == CATEGORY_EXHIBITIONS) marker = BitmapDescriptorFactory.fromResource(R.drawable.museum_marker);
+        else if(this.category == CATEGORY_FESTIVALS_LIFESTYLE) marker = BitmapDescriptorFactory.fromResource(R.drawable.festival_marker);
+        else if(this.category == CATEGORY_PERFORMING_ARTS) marker = BitmapDescriptorFactory.fromResource(R.drawable.performance_marker);
+        else if(this.category == CATEGORY_SPORTS_OUTDOORS) marker = BitmapDescriptorFactory.fromResource(R.drawable.sport_marker);
+        else if(this.category == CATEGORY_WORKSHOPS_CLASSES) marker = BitmapDescriptorFactory.fromResource(R.drawable.workshop_marker);
+        else marker = BitmapDescriptorFactory.fromResource(R.drawable.eventicon);
+
+        return marker;
+    }
+
 
     /** Seeing as category is stored as an int, this gives a string representation of it **/
     public String getCategoryString(){

@@ -33,14 +33,14 @@ public class App extends Application{
 
     private int offset = 0;
     private int eventsCount = 0;
-    public static double radiusLength = 1;
+    public static double radiusLength = 5;
     private final String eventFindaAPIUsername = "whynot";
     private final String eventFindaAPIPassword = "kd87ymx3txqv";
 
 
     public App(Context context, MainActivity mainActivity) {
         super.onCreate();
-
+        System.out.println("Boom!");
         // Holds reference to front end Main Activity to allow callback functions
         myActivity = mainActivity;
         // Holds reference to Applications overall context

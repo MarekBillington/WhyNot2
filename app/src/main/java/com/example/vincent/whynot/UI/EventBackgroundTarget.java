@@ -32,7 +32,6 @@ public class EventBackgroundTarget implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         this.banner.setBackground(new BitmapDrawable(context.getResources(), bitmap));
-        //targets.remove(this);
     }
 
     @Override
