@@ -36,11 +36,11 @@ public class EventBackgroundTarget implements Target {
 
     @Override
     public void onBitmapFailed(final Drawable errorDrawable) {
-        Log.d("TAG", "FAILED");
+        Log.d("TAG", "Failed loading event image");
     }
 
     @Override
     public void onPrepareLoad(final Drawable placeHolderDrawable) {
-        Log.d("TAG", "Prepare Load");
+        Log.d("TAG", "Loading event image");
     }
 }

@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity implements EventsFragment.Eve
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
-        
+
         if(applicationData == null) {
             applicationData = new App(getApplicationContext(), this);
         }
@@ -99,9 +99,17 @@ public class MainActivity extends FragmentActivity implements EventsFragment.Eve
     }
 
     /** Switches to maps fragment and zooms on a particular location   **/
-    public void switchToMaps(Location location){
+    public void switchToMaps(Event event){
         tabs.switchToTab(1);
-        MapsFragment.centreMapOnLocation(location);
+        MapsFragment.centreMapOnEvent(event);
+    }
+
+    /** Only end the activity if you are on the events list tab, if you are on the maps tab, return
+     *  to the events list tab. **/
+    @Override
+    public void onBackPressed(){
+        if(tabs.getCurrentTabIndex() == 1) tabs.switchToTab(0);
+        else finish();
     }
 
     public void setRefreshing(){

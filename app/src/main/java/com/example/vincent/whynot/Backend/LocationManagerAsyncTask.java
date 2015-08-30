@@ -8,6 +8,9 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import com.example.vincent.whynot.App;
+import com.example.vincent.whynot.UI.dummy.MapsFragment;
+
+import java.util.Map;
 
 
 public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
@@ -32,11 +35,11 @@ public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
         String provider = locationManager.getBestProvider(criteria, true);
         if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            myApp.setUserLocation(location);
+            App.setUserLocation(location);
             System.out.println("Testing: User location found using GPS");
         } else if (locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            myApp.setUserLocation(location);
+            App.setUserLocation(location);
             System.out.println("Testing: User location found using Network Provider");
         } else {
             System.out.println("Testing: User location unable to be found");
@@ -49,9 +52,10 @@ public class LocationManagerAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        // Get the total returned events count
+        System.out.println("Testing location onpostexecute");
         myApp.getEventsStringHTTPRequest(myApp.getOffset());
-
+        // Centre the map on the user
+        MapsFragment.centreMapOnLocation(App.userLocation, MapsFragment.INITIAL_HEIGHT);
     }
 
 }

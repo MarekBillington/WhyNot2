@@ -8,8 +8,8 @@
         android:id="@+id/image_container"
         android:transitionName="container"
         android:background="@drawable/gigs"
-        android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_width="300dp"
+        android:layout_height="140dp">
 
     </RelativeLayout>
 
@@ -23,8 +23,10 @@
         android:text="Sports and Outdoors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/event_name"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/image_container"
+        android:layout_toEndOf="@+id/image_container" />
     <TextView
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -47,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@id/event_category"
+        android:layout_toRightOf="@id/image_container"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -64,7 +67,8 @@
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
         android:text="3F, 30 Randolph st, Eden Terrace"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_marginRight="4dp" />
 
     <TextView
         android:id="@+id/event_time"
@@ -72,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/event_name"
+
         android:layout_marginRight="12dp"
         android:layout_marginTop="4dp"
         android:gravity="center_vertical"
@@ -87,6 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/event_category"
+        android:layout_toRightOf="@id/image_container"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_explore_black_24dp"></ImageView>
@@ -110,8 +115,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/event_distance"
+        android:layout_toRightOf="@id/image_container"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="12dp"
         android:src="@drawable/ic_accessibility_black_24dp"></ImageView>
 
     <TextView
@@ -123,15 +129,17 @@
         android:layout_marginLeft="8dp"
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="This event is open to everyone"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_marginRight="4dp" />
 
     <View
         android:id="@+id/sep2"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@id/event_restrictions"
+        android:layout_toRightOf="@id/image_container"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -146,7 +154,7 @@
         android:layout_marginRight="12dp"
         android:layout_marginBottom="4dp"
         android:text="@string/example_description"
-        android:layout_below="@+id/event_restrictions"
+        android:layout_below="@+id/event_name"
         android:id="@+id/event_description"
         android:textSize="16sp"
         android:paddingBottom="16dp"/>
@@ -184,7 +192,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_marginTop="8dp"
-        android:text="@string/button_website_text"
+        android:text="Website"
         android:textSize="16sp" />
 
         <ImageView
@@ -201,7 +209,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_marginTop="8dp"
-        android:text="@string/button_tickets_text"
+        android:text="Tickets"
         android:textSize="16sp" />
     </LinearLayout>
 </RelativeLayout>

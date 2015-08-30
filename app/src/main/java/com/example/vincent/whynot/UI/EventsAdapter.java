@@ -1,11 +1,8 @@
 package com.example.vincent.whynot.UI;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -19,12 +16,11 @@ import android.widget.TextView;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.dummy.EventsFragment;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 
 /**
- * Created by Vincent on 20/08/2015.
+ * EventsAdapter is responsible for creating and inserting event items into the the
+ * RecyclerView in the EventsFragment class.
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
@@ -32,18 +28,23 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private Context context;
     private EventsFragment eventsFragment;
 
+    public EventsAdapter(Activity mainActivity, EventsFragment eventsFragment) {
+        this.mainActivity = mainActivity;
+        this.context = mainActivity.getApplicationContext();
+        this.eventsFragment = eventsFragment;
+    }
 
+
+    /** Viewholder object, where each event item is initialised. **/
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        private Event event;
+
+        /** Views and UI objects. **/
         private View v;
         private RelativeLayout banner;
         private TextView nameTextView, categoryTextView, priceTextView,
                 distanceTextView, addressTextView, timeTextView;
-
-        private Event event;
-
-        // To hold strong references to the targets so that they don't get garbage collected.
-        private ArrayList<Target> targets = new ArrayList<>();
 
         public ViewHolder(View v) {
             super(v);
@@ -66,24 +67,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             distanceTextView.setText(distanceString + "km away");
 
             addressTextView = (TextView) v.findViewById(R.id.event_location);
-            addressTextView.setText("at " + event.getLocationShort());
+            addressTextView.setText("at " + event.getAddressShort());
 
-            // Change to maps fragment and go to location
-            final Location eventLocation = new Location("");
 
-            eventLocation.setLatitude(event.getLatitude());
-            eventLocation.setLongitude(event.getLongitude());
             distanceTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eventsFragment.openLocation(eventLocation);
+                    eventsFragment.openLocation(event);
                 }
             });
 
             v.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eventsFragment.openLocation(eventLocation);
+                    eventsFragment.openLocation(event);
                 }
             });
 
@@ -92,7 +89,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             timeTextView.setText(event.formatTime());
 
             banner = (RelativeLayout) v.findViewById(R.id.image_container);
-            setEventImage(banner, event);
+            App.setEventImage(mainActivity, banner, event);
 
             final View compass = v.findViewById(R.id.imageView);
 
@@ -105,22 +102,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             });
         }
 
-        /** Sets an image to the background using Picasso, if event doesn't have an image.
-         *  it will assign a generic image instead. **/
-        public void setEventImage(View banner, Event event){
-            EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(context, banner);
-            if(!event.getImg_url().isEmpty()) {
-                Picasso.with(mainActivity).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
-                targets.add(eventBackgroundTarget);
-            }else{
-                if(event.getCategory() == Event.CATEGORY_CONCERTS_GIG) banner.setBackgroundResource(R.drawable.gigs);
-                else if(event.getCategory() == Event.CATEGORY_EXHIBITIONS) banner.setBackgroundResource(R.drawable.exhibition);
-                else if(event.getCategory() == Event.CATEGORY_PERFORMING_ARTS) banner.setBackgroundResource(R.drawable.perform_arts);
-                else if(event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS) banner.setBackgroundResource(R.drawable.sports);
-                else if(event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES) banner.setBackgroundResource(R.drawable.workshop);
-                else if(event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE) banner.setBackgroundResource(R.drawable.festivals);
-            }
-        }
 
         /** Open the event into an event activity, using a transition for all their shared views.**/
         private void openEventActivity(Event event, View container, View name, View category, View location,
@@ -158,12 +139,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         notifyItemRemoved(position);
     }
 
-    public EventsAdapter(Activity mainActivity, EventsFragment eventsFragment) {
-        this.mainActivity = mainActivity;
-        this.context = mainActivity.getApplicationContext();
-        this.eventsFragment = eventsFragment;
-    }
-
     @Override
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
@@ -178,7 +153,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         holder.setEvent(App.eventsArray.get(position));
         holder.initialiseViews();
-
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -1,7 +1,12 @@
 package com.example.vincent.whynot.UI;
 
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LevelListDrawable;
 import android.location.Location;
 
 import com.example.vincent.whynot.App;
@@ -29,7 +34,7 @@ public class Event {
     private String description;
     private String dt_start;
     private String endDate;
-    private String location;
+    private String address;
     private double latitude;
     private double longitude;
     private ArrayList<String> price;
@@ -46,14 +51,14 @@ public class Event {
     // New event constructor that initialises all values rather than using setters
     // as Event objects are read only effectively. Yet to be used to build events, still
     // using setters
-    public Event(App app, String id, String name, String description, String location,
+    public Event(App app, String id, String name, String description, String address,
                  double latitude, double longitude, boolean free, String restrictions,
                  String distanceTo, String cheapest, String webpage, int category) {
         this.myApp = app;
         this.id = id;
         this.name = stripCDATA(name);
         this.description = stripCDATA(description);
-        this.location = location;
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.free = free;
@@ -97,8 +102,8 @@ public class Event {
         this.endDate = endDateString;
     }
 
-    public void setLocation(String loc){
-        this.location = stripCDATA(loc);
+    public void setAddress(String loc){
+        this.address = stripCDATA(loc);
     }
 
     public void setLatitude(float lat){
@@ -157,13 +162,13 @@ public class Event {
         return this.endDate;
     }
 
-    public String getLocation(){
-        return this.location;
+    public String getAddress(){
+        return this.address;
     }
 
-    /** Removes the city name out of the location string. **/
-    public String getLocationShort(){
-        String[] parts = this.location.split(",");
+    /** Removes the city name out of the address string. **/
+    public String getAddressShort(){
+        String[] parts = this.address.split(",");
         String shortened = "";
         if(parts.length > 1) {
             for (int i = 0; i < parts.length - 1; i++) {
@@ -173,6 +178,15 @@ public class Event {
         if (shortened.length() > 35) shortened = shortened.substring(0, 35) + "...";
 
         return shortened;
+    }
+
+    public Location getLocation(){
+        // Change to maps fragment and go to location
+        final Location eventLocation = new Location("");
+
+        eventLocation.setLatitude(this.getLatitude());
+        eventLocation.setLongitude(this.getLongitude());
+        return eventLocation;
     }
 
     public String getRestrictions(){
@@ -229,7 +243,7 @@ public class Event {
     }
 
     public void setDistance() {
-        Location userLocation = myApp.getUserLocation();
+        Location userLocation = App.userLocation;
         double userLat = userLocation.getLatitude();
         double userLong = userLocation.getLongitude();
         float[] results = {1};
@@ -285,7 +299,7 @@ public class Event {
     }
 
     public boolean verifyLocation(){
-        Location userLocation = myApp.getUserLocation();
+        Location userLocation = App.userLocation;
         double userLat = userLocation.getLatitude();
         double userLong = userLocation.getLongitude();
         float[] results = {1};
@@ -306,17 +320,6 @@ public class Event {
         }
     }
 
-    public String getOverview(){
-        String nl = System.getProperty("line.separator");
-        String output = "\n" + this.description + "\n\n";
-        output += "" + this.cheapest + " event";
-
-        //if(restriction > 0) output += "\nMinimum age: " + this.ageRestriction;
-
-        output += "%" + this.getWebpage() + "\n";
-        return output;
-    }
-
     /** Strips CDATA tag off of XML text. **/
     public String stripCDATA(String s) {
         s = s.trim();
@@ -332,7 +335,7 @@ public class Event {
     }
 
     /** Returns the correct marker based on the Event's category. **/
-    public BitmapDescriptor getMarker(){
+    public BitmapDescriptor getMarker(Context context){
         BitmapDescriptor marker = null;
 
         if(this.category == CATEGORY_CONCERTS_GIG) marker = BitmapDescriptorFactory.fromResource(R.drawable.gig_marker);

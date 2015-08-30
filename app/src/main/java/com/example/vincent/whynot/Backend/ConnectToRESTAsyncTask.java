@@ -77,7 +77,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
 
         // Try to establish URL connection with HttpURLConnection object
         try {
-            if (myApp.getUserLocation() == null) {
+            if (App.userLocation == null) {
                 url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date" +
                         "&rows=20" +
                         "&end_date=2015-08-13%2023:59:59" +
@@ -156,7 +156,7 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
 
     // returns a string of the users location coordinates for use in the url request parameters
     private String getUserLocationCoordinateString() {
-        Location userLocation = myApp.getUserLocation();
+        Location userLocation = App.userLocation;
         String latitude = Double.toString(userLocation.getLatitude());
         String longitude = Double.toString(userLocation.getLongitude());
         String coordinateString = latitude + "," + longitude;

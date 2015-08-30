@@ -332,4 +332,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         mViewPager.setCurrentItem(index);
     }
 
+    public int getCurrentTabIndex(){
+        return mViewPager.getCurrentItem();
+    }
+
 }

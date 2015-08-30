@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">WhyNot</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="myString">Expandable/Collapsible Views (text, images, etc.)
+    <string name="title_activity_event">EventActivity</string>
+
+    <string name="example_description">Expandable/Collapsible Views (text, images, etc.)
         in Android are useful when we want to display all the available options
         on one screen, without the user having to scroll all the way to fi
         nd the one he/she is interested in. What we are doing is trying t
@@ -10,7 +11,9 @@
         an overall view of its content. The Android SDK provides the Expan
         dableListView class, but sometimes that option is overkill
         or unfit for our intents  purposes, and we may decide to roll out our own mechanism.</string>
-    <string name="title_activity_event">EventActivity</string>
 
+    <!--Button strings-->
     <string name="button_website_text">Website</string>
+    <string name="button_tickets_text">Tickets</string>
+    <string name="button_directions_text">Directions</string>
 </resources>

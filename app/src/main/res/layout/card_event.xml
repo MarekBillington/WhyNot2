@@ -29,9 +29,9 @@
         <TextView
             android:textStyle="bold"
             android:fontFamily="Arial"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="@android:color/darker_gray"
-            android:background="#bb000000"
+            android:background="#88000000"
             android:id="@+id/event_category"
             android:transitionName="category"
             android:text="Sports and Outdoors"
@@ -42,16 +42,14 @@
         <TextView
             android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:background="#bb000000"
+            android:background="#88000000"
             android:fontFamily="Arial"
             android:textSize="16sp"
             android:id="@+id/event_name"
             android:transitionName="name"
-            android:minWidth="100dp"
             android:text="Long event name is going to be written here"
-            android:layout_marginRight="20dp"
             android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
             />
@@ -63,7 +61,7 @@
             android:text="$20"
             android:id="@+id/event_price"
             android:textColor="#ffffff"
-            android:background="#bb000000"
+            android:background="#88000000"
             android:textSize="20sp"
             android:padding="8dp"/>
 
@@ -71,7 +69,7 @@
 
     <TextView
         android:id="@+id/event_location"
-        android:transitionName="location"
+        android:transitionName="address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_container"
@@ -125,6 +123,5 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
-
 </RelativeLayout>
 

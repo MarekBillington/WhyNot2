@@ -3,35 +3,23 @@ package com.example.vincent.whynot.UI.dummy;
 /**
  * Created by George on 8/8/2015.
  */
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.androidmapsextensions.GoogleMap;
+import com.androidmapsextensions.Marker;
+import com.androidmapsextensions.MarkerOptions;
+import com.androidmapsextensions.OnMapReadyCallback;
+import com.androidmapsextensions.SupportMapFragment;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
 import com.example.vincent.whynot.UI.Event;
+import com.example.vincent.whynot.UI.EventActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Fragment containing a Google Map that is used to display all the various events.
@@ -40,16 +28,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class MapsFragment extends SupportMapFragment {
 
+    /** Heights for centering the camera, default is for centering on events, initial is the initial
+     *  height of the camera. **/
+    public static final int DEFAULT_HEIGHT = 16, INITIAL_HEIGHT = 13;
+
     public static GoogleMap mMap;
+
     private App app;
 
-
+    /** If the map hasn't been retrieved, get it, then set it up, otherwise set it up straight away.**/
     public void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
-        // Gets to GoogleMap from the MapView and does initialization stuff
-
         if (mMap == null) {
-            this.getMapAsync(onMapReadyCallback);
+            this.getExtendedMapAsync(onMapReadyCallback);
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
@@ -57,12 +48,12 @@ public class MapsFragment extends SupportMapFragment {
         }
     }
 
+    /** Callback for setting up the map once it has been retrieved. **/
     public OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
             setUpMap();
-            System.out.println("testing map found");
         }
     };
 
@@ -71,62 +62,22 @@ public class MapsFragment extends SupportMapFragment {
      */
     public void setUpMap() {
         mMap.setMyLocationEnabled(true);
-
-        //centreMapOnUser();
-
-      mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-          final Context context = getActivity().getApplicationContext();
-
+        // Open event activity on click
+         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
           @Override
           public void onInfoWindowClick(Marker marker) {
-              Intent viewIntent = new Intent(Intent.ACTION_VIEW,
-                      Uri.parse(marker.getSnippet().split("%")[1]));
-              viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              context.startActivity(viewIntent);
+              Intent intent = new Intent(getActivity(), EventActivity.class);
+              intent.putExtra("id", marker.getSnippet());
+              intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                  getActivity().startActivity(intent);
           }
-      });
+         });
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            public View getInfoContents(Marker marker) {
-
-                final Context context = getActivity().getApplicationContext(); //or getActivity(), YourActivity.this, etc.
-
-                //Custom info window containing 2 text views and a rendered button
-                LinearLayout info = new LinearLayout(context);
-                info.setOrientation(LinearLayout.VERTICAL);
-
-                String description = marker.getSnippet().split("%")[0];
-                //String url = marker.getSnippet().split("%")[1];
-
-                TextView title = new TextView(context);
-                title.setPadding(8,8,8,8);
-                title.setTextColor(Color.BLACK);
-                title.setGravity(Gravity.CENTER);
-                title.setTypeface(null, Typeface.BOLD);
-                title.setText(marker.getTitle());
-
-                TextView snippet = new TextView(context);
-                snippet.setGravity(Gravity.CENTER);
-                snippet.setTextColor(Color.GRAY);
-                snippet.setText(description);
-
-                //Button is only rendered and is non-functional
-                Button openSite = new Button(context);
-                openSite.setText("Visit site");
-
-                info.addView(title);
-                info.addView(snippet);
-                info.addView(openSite);
-
-                return info;
-            }
-        });
+        // Set the info window adapter, place the markers if the events have already loaded, and
+        // Centre the map on the user if the location has been retrieved.
+        mMap.setInfoWindowAdapter(new EventInfoWindowAdapter());
         if(!app.getEventsArray().isEmpty()) placeMarkers(app);
+        if(App.userLocation != null) centreMapOnLocation(App.userLocation, INITIAL_HEIGHT);
     }
 
     /** Places all the event markers on the map. */
@@ -136,42 +87,79 @@ public class MapsFragment extends SupportMapFragment {
            mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(e.getLatitude(), e.getLongitude()))
                     .title(e.getName())
-                    .icon(e.getMarker()))
-                   .setSnippet(e.getOverview());
+                    .icon(e.getMarker(getContext())))
+                    .setSnippet(e.getId() + "");
 
        }
+
     }
 
-    /*public void centreMapOnUser(){
-
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        LatLng myLocation = null;
-
-        if (location != null) {
-            myLocation = new LatLng(location.getLatitude(),
-                    location.getLongitude());
+    /** Get the marker with the id entered. **/
+    public static Marker getMarker(int id){
+        for (Marker marker: mMap.getMarkers()){
+            if(Integer.parseInt(marker.getSnippet()) == id) return marker;
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
-    }*/
+        return null;
+    }
 
     public void setApp(App app){
         this.app = app;
     }
 
-    //Focuses zoom on to user
-
-    public static void centreMapOnLocation(Location location){
-
+    /** Focuses zoom on to given location. **/
+    public static void centreMapOnLocation(Location location, int height){
         LatLng myLocation = null;
 
         if (location != null) {
             myLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
         }
-        if(mMap != null) mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16));
+        if(mMap != null) mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, height));
     }
+
+    /** Same as above but focuses on an even and opens the events info as well. **/
+    public static void centreMapOnEvent(Event event){
+        centreMapOnLocation(event.getLocation(), DEFAULT_HEIGHT);
+        getMarker(Integer.parseInt(event.getId())).showInfoWindow();
+    }
+
+    /** Inner class for custom event info windows. **/
+    private class EventInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
+
+        /** Views for the info windows.**/
+        private View myContentsView;
+        private TextView titleTextView, categoryTextView, timeTextView, addressTextView;
+        private View banner;
+
+            public EventInfoWindowAdapter(){
+                myContentsView = getActivity().getLayoutInflater().inflate(R.layout.event_info_window, null);
+            }
+
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            public View getInfoContents(Marker marker) {
+                Event event = App.getEventByID(Integer.parseInt(marker.getSnippet().trim()));
+
+                titleTextView = (TextView) myContentsView.findViewById(R.id.event_name);
+                titleTextView.setText(event.getName());
+
+                categoryTextView = (TextView) myContentsView.findViewById(R.id.event_category);
+                categoryTextView.setText(event.getCategoryString());
+
+                addressTextView = (TextView) myContentsView.findViewById(R.id.event_location);
+                addressTextView.setText(event.getAddressShort());
+
+                timeTextView = (TextView) myContentsView.findViewById(R.id.event_time);
+                timeTextView.setText(event.formatTime());
+
+                banner = myContentsView.findViewById(R.id.image_container);
+                App.setEventImage(getActivity(), banner, event);
+
+                return myContentsView;
+            }
+
+        }
 
 }

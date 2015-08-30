@@ -1,48 +1,48 @@
 package com.example.vincent.whynot.UI;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+
+
+/**
+ * A large more descriptive view of each activity.
+ **/
 
 public class EventActivity extends AppCompatActivity {
 
-    /**
-     * A large more descriptive view of each activity.
-     **/
+    private Context context;
+    private Event event;
 
+    /** Views and UI objects. **/
     private TextView nameTextView, categoryTextView, descriptionTextView, distanceTextView,
             addressTextView, timeTextView, restrictionsTextView, websiteTextView, ticketTextView;
     private ImageView websiteButton, ticketButton;
     private RelativeLayout banner;
 
-    private Context context;
-
-    private Event event;
-
-    private Target target;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Allow transitions
+        getWindow().setExitTransition(new Fade());
+        getWindow().setEnterTransition(new Fade());
         setContentView(R.layout.activity_event);
 
         this.context = getApplicationContext();
 
+        // Get Event using bundled event id
         Bundle bundle = getIntent().getExtras();
         int eventId = Integer.parseInt(bundle.getString("id"));
         event = MainActivity.applicationData.getEventByID(eventId);
@@ -63,11 +63,10 @@ public class EventActivity extends AppCompatActivity {
         distanceTextView = (TextView) findViewById(R.id.event_distance);
         float distance = Float.parseFloat(event.getDistance()) / 1000;
         String distanceString = String.format("%.01f", distance);
-        ;
         distanceTextView.setText(distanceString + "km away");
 
         addressTextView = (TextView) findViewById(R.id.event_location);
-        addressTextView.setText("at " + event.getLocation());
+        addressTextView.setText("at " + event.getAddressShort());
 
         restrictionsTextView = (TextView) findViewById(R.id.event_restrictions);
         restrictionsTextView.setText("Event rated: " + event.getRestrictions());
@@ -93,7 +92,7 @@ public class EventActivity extends AppCompatActivity {
 //
         descriptionTextView = (TextView) findViewById(R.id.event_description);
         descriptionTextView.setText(event.getDescription());
-//
+
         // Only get the time, not the date
         timeTextView = (TextView) findViewById(R.id.event_time);
         timeTextView.setText(event.formatTime());
@@ -101,9 +100,11 @@ public class EventActivity extends AppCompatActivity {
         initialiseBottomButtons();
 
         banner = (RelativeLayout) findViewById(R.id.image_container);
-        setEventImage(banner, event);
+        App.setEventImage(this, banner, event);
     }
 
+    /** Initialise all the buttons at the bottom of the activity and set
+     * their onClick listeners. **/
     private void initialiseBottomButtons() {
         websiteButton = (ImageView) findViewById(R.id.button_website);
         websiteButton.setOnClickListener(websiteOnClickListener);
@@ -116,6 +117,7 @@ public class EventActivity extends AppCompatActivity {
         ticketTextView.setOnClickListener(ticketOnClickListener);
     }
 
+    /** onClick listeners for website and tickets buttons.**/
     private View.OnClickListener websiteOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -131,41 +133,15 @@ public class EventActivity extends AppCompatActivity {
         }
     };
 
-
-    /**
-     * Sets an image to the background using Picasso, if event doesn't have an image.
-     * it will assign a generic image instead.
-     **/
-    public void setEventImage(View banner, Event event) {
-        EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(getApplicationContext(), banner);
-        if (!event.getImg_url().isEmpty()) {
-            Picasso.with(this).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
-            target = eventBackgroundTarget;
-        } else {
-            if (event.getCategory() == Event.CATEGORY_CONCERTS_GIG)
-                banner.setBackgroundResource(R.drawable.gigs);
-            else if (event.getCategory() == Event.CATEGORY_EXHIBITIONS)
-                banner.setBackgroundResource(R.drawable.exhibition);
-            else if (event.getCategory() == Event.CATEGORY_PERFORMING_ARTS)
-                banner.setBackgroundResource(R.drawable.perform_arts);
-            else if (event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS)
-                banner.setBackgroundResource(R.drawable.sports);
-            else if (event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES)
-                banner.setBackgroundResource(R.drawable.workshop);
-            else if (event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE)
-                banner.setBackgroundResource(R.drawable.festivals);
-        }
-    }
-
     /**
      * Opens the eventfinda or booking website link.
      **/
     private void openWebsite(String url) {
+        supportFinishAfterTransition();
         Intent viewIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(url));
         viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(viewIntent);
-        supportFinishAfterTransition();
     }
 
     @Override

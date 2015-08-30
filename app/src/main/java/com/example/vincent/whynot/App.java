@@ -1,17 +1,23 @@
 package com.example.vincent.whynot;
 
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.view.View;
 
 import com.example.vincent.whynot.Backend.ConnectToRESTAsyncTask;
 import com.example.vincent.whynot.Backend.LocationManagerAsyncTask;
 import com.example.vincent.whynot.Backend.XMLParserAsyncTask;
 import com.example.vincent.whynot.UI.Event;
+import com.example.vincent.whynot.UI.EventBackgroundTarget;
 import com.example.vincent.whynot.UI.MainActivity;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -24,23 +30,28 @@ public class App extends Application{
     public static App app;
     public MainActivity myActivity;
     private Context myContext;
-    private Location userLocation;
+    public static Location userLocation;
 
     /** Buffer array holds all events until all async requests have finished.
      * This means the app can still function while making requests. **/
     public static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<Event> bufferArray = new CopyOnWriteArrayList<>();
 
+    /** To hold strong references to the targets so that they don't get garbage collected. **/
+    public static ArrayList<Target> targets = new ArrayList<>();
+
+    /** Fields for EventFinda requests. **/
     private int offset = 0;
     private int eventsCount = 0;
     public static double radiusLength = 5;
-    private final String eventFindaAPIUsername = "whynot";
-    private final String eventFindaAPIPassword = "kd87ymx3txqv";
+
+    /** Login details for EventFinda API. **/
+    private static final String eventFindaAPIUsername = "whynot";
+    private static final String eventFindaAPIPassword = "kd87ymx3txqv";
 
 
     public App(Context context, MainActivity mainActivity) {
         super.onCreate();
-        System.out.println("Boom!");
         // Holds reference to front end Main Activity to allow callback functions
         myActivity = mainActivity;
         // Holds reference to Applications overall context
@@ -82,7 +93,7 @@ public class App extends Application{
                 (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
         LocationManagerAsyncTask locationManagerAsyncTask =
                 new LocationManagerAsyncTask(this, locationManager);
-        locationManagerAsyncTask.execute();
+        locationManagerAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void setEventsCountFromHTTPRequest() {
@@ -93,20 +104,20 @@ public class App extends Application{
     // the LocationManagerAsyncTask onPostExecute() method
     public void getEventsStringHTTPRequest(int asyncTaskOffset) {
         ConnectToRESTAsyncTask httpRequest = new ConnectToRESTAsyncTask(this, asyncTaskOffset);
-        httpRequest.execute();
+        httpRequest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     // Build the events array from the string returned by
     // the http request, called in the ConnectToRESTAsyncTask onPostExecute() method
     public void getEventsArrayFromString(String xmlString, int asyncTaskOffset) {
         XMLParserAsyncTask xmlParser = new XMLParserAsyncTask(this, xmlString, asyncTaskOffset);
-        xmlParser.execute();
+        xmlParser.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     // Class property setters and getters
 
-    public void setUserLocation(Location newLocation) {
-        this.userLocation = newLocation;
+    public static void setUserLocation(Location newLocation) {
+        userLocation = newLocation;
     }
 
     public void setBufferArray(CopyOnWriteArrayList<Event> newEventsArray) {
@@ -134,11 +145,36 @@ public class App extends Application{
         eventsCount = newEventsCount;
     }
 
-    public Event getEventByID(int id){
+    public static Event getEventByID(int id){
         for(Event event: eventsArray){
             if(Integer.parseInt(event.getId()) == id) return event;
         }
         return null;
+    }
+
+    /**
+     * Sets an image to the background using Picasso, if event doesn't have an image.
+     * it will assign a generic image instead.
+     **/
+    public static void setEventImage(Activity activity, View banner, Event event) {
+        EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(activity, banner);
+        if (!event.getImg_url().isEmpty()) {
+            Picasso.with(activity).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
+            App.targets.add(eventBackgroundTarget);
+        } else {
+            if (event.getCategory() == Event.CATEGORY_CONCERTS_GIG)
+                banner.setBackgroundResource(R.drawable.gigs);
+            else if (event.getCategory() == Event.CATEGORY_EXHIBITIONS)
+                banner.setBackgroundResource(R.drawable.exhibition);
+            else if (event.getCategory() == Event.CATEGORY_PERFORMING_ARTS)
+                banner.setBackgroundResource(R.drawable.perform_arts);
+            else if (event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS)
+                banner.setBackgroundResource(R.drawable.sports);
+            else if (event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES)
+                banner.setBackgroundResource(R.drawable.workshop);
+            else if (event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE)
+                banner.setBackgroundResource(R.drawable.festivals);
+        }
     }
 
     public Location getUserLocation() {

@@ -45,7 +45,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        if (myApp.getUserLocation() != null) {
+        if (App.userLocation != null) {
             buildXMLFile(eventsString);
         } else {
             buildXMLFileWithoutLocationData(eventsString);
@@ -122,7 +122,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     eventObject.setWebpage(web.getTextContent());
 
                     Node loc = event.getElementsByTagName("location_summary").item(0);
-                    eventObject.setLocation(loc.getTextContent());
+                    eventObject.setAddress(loc.getTextContent());
 
                     Element point = (Element) event.getElementsByTagName("point").item(0);
                     Node lat = point.getElementsByTagName("lat").item(0);
@@ -184,7 +184,10 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                         Node transformationId = tran.getElementsByTagName("transformation_id").item(0);
                         if (Integer.parseInt(transformationId.getTextContent()) == 7) {
                             Node url = tran.getElementsByTagName("url").item(0);
-                            eventObject.setImgUrl(url.getTextContent());
+                            // If the image url is the standard icon venue url, discard it
+                            if(url.getTextContent().equals("http://s1.eventfinda.co.nz/images/global/iconVenue-7.png")) eventObject.setImg_url("");
+                            else eventObject.setImgUrl(url.getTextContent());
+                            //System.out.println("Testing image url: " + url.getTextContent());
                             break;
                         } else if (Integer.parseInt(transformationId.getTextContent()) == 27) {
                             Node url = tran.getElementsByTagName("url").item(0);
@@ -255,7 +258,7 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     eventObject.setWebpage(web.getTextContent());
 
                     Node loc = event.getElementsByTagName("location_summary").item(0);
-                    eventObject.setLocation(loc.getTextContent());
+                    eventObject.setAddress(loc.getTextContent());
 
                     eventObject.setDistance();
 

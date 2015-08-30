@@ -19,17 +19,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.OvershootInterpolator;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
+import com.example.vincent.whynot.UI.Event;
 import com.example.vincent.whynot.UI.EventsAdapter;
 import com.example.vincent.whynot.UI.MainActivity;
 
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
+
 /**
- *  Fragment which contains a recyclerview, listing all the individual event cards.
+ *  Fragment which contains a RecyclerView, listing all the individual event items.
+ *  The RecyclerView is filled with events by the EventsAdapter.
  */
 public class EventsFragment extends Fragment {
+
+    public static final int ANIMATION_DURATION = 150;// Time in ms of event item transitions
 
     private MainActivity mainActivity = null;
     private Context context;
@@ -55,6 +64,7 @@ public class EventsFragment extends Fragment {
         return view;
     }
 
+    /** Make sure the Activity implements EventsFragmentListener, otherwise throw an exception. **/
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -62,18 +72,16 @@ public class EventsFragment extends Fragment {
             mapsCallback = (EventsFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement TextClicked");
+                    + " must implement EventsFragmentListener");
         }
     }
 
     private void initialiseRecycleView(View view){
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
 
         // If screen is in portrait, use a linear layout, in landscape use a  gridlayout
+        // with 2 columns
         int orientation = getActivity().getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT)
             layoutManager = new LinearLayoutManager(context);
@@ -82,15 +90,23 @@ public class EventsFragment extends Fragment {
 
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter (see also next example)
+        // Specify the adapter and add animations
         eventsAdapter = new EventsAdapter(getActivity(), this);
-        recyclerView.setAdapter(eventsAdapter);
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(eventsAdapter);
+        alphaAdapter.setDuration(ANIMATION_DURATION);
+        alphaAdapter.setInterpolator(new OvershootInterpolator());
+        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
 
-        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(0));
+        scaleAdapter.setDuration(ANIMATION_DURATION);
+        recyclerView.setAdapter(scaleAdapter);
+
+        //recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(0));
+        recyclerView.setItemAnimator(new SlideInLeftAnimator());
     }
 
-    public void openLocation(Location location){
-        mapsCallback.switchToMaps(location);
+    /** Open the loction of the event on the map and show it's info window. **/
+    public void openLocation(Event event){
+        mapsCallback.switchToMaps(event);
     }
 
 
@@ -121,10 +137,8 @@ public class EventsFragment extends Fragment {
         this.mainActivity = mainActivity;
     }
 
-
-
     /**
-     * Spacing for the Recyclerview
+     * Spacing for the RecyclerView
      */
     public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -143,10 +157,9 @@ public class EventsFragment extends Fragment {
         }
     }
 
-
     /** Listener for interacting with the MainActivity. **/
     public interface EventsFragmentListener{
-        public void switchToMaps(Location location);
+        public void switchToMaps(Event event);
     }
 
 
