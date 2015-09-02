@@ -1,5 +1,7 @@
 package com.example.vincent.whynot.UI;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -10,20 +12,31 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
+import com.example.vincent.whynot.UI.dummy.EventViewPager;
 import com.example.vincent.whynot.UI.dummy.EventsFragment;
 import com.example.vincent.whynot.UI.dummy.MapsFragment;
 import com.example.vincent.whynot.UI.dummy.SlidingTabLayout;
 import com.example.vincent.whynot.UI.dummy.ViewPagerAdapter;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnItemClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -32,25 +45,29 @@ import com.squareup.picasso.Picasso;
  * on a map.
  */
 
-public class MainActivity extends FragmentActivity implements EventsFragment.EventsFragmentListener {
+public class MainActivity extends AppCompatActivity implements EventsFragment.EventsFragmentListener {
 
     public static FragmentManager fragmentManager;
 
-    private ViewPager pager;
+    private EventViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout tabs;
+    private Toolbar toolbar;
+    private Menu menu;
 
     private static final CharSequence TITLES[] = {"Events", "Map"};
     private static final int NUMBOFTABS = 2;
+    private static final int ANIMATION_DURATION = 100;
 
     public static App applicationData = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        //requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
 
         setContentView(R.layout.activity_main);
 
@@ -64,24 +81,71 @@ public class MainActivity extends FragmentActivity implements EventsFragment.Eve
         adapter =  new ViewPagerAdapter(applicationData, this,fragmentManager, TITLES, NUMBOFTABS);
 
         // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
+        pager = (EventViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
-        // Assigning the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        // Assigning the Sliding Tab Layout View
+//        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+//        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+//
+//        // Setting Custom Color for the Scroll bar indicator of the Tab View
+//        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+//            @Override
+//            public int getIndicatorColor(int position) {
+//                return getResources().getColor(R.color.tabsScrollColor);
+//            }
+//        });
+//
+//        // Setting the ViewPager For the SlidingTabsLayout
+//        tabs.setViewPager(pager);
+//        tabs.setVisibility(View.GONE);
+        initialiseToolbar();
+    }
+
+    /** Initialise the toolbar **/
+    private void initialiseToolbar(){
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setTitle("");
+
+        toolbar.inflateMenu(R.menu.menu_main);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Toast.makeText(getApplicationContext(), "ddad " + menuItem.getItemId(), Toast.LENGTH_LONG).show();
+                switch (menuItem.getItemId()) {
+                    case R.id.action_maps:
+                        tabs.switchToTab(1);
+                        return true;
+                }
+
+                return false;
             }
         });
 
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        refreshToolbar();
+    }
 
+    /** Ensure toolbar is showing the correct items. **/
+    public void refreshToolbar(){
+        if(pager.getCurrentItem() == 1) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Near you");
+            animateViewOut(toolbar.findViewById(R.id.action_maps));//menu.findItem(R.id.action_maps).setVisible(false);
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle("Events");
+            animateViewIn(toolbar.findViewById(R.id.action_maps));//menu.findItem(R.id.action_maps).setVisible(true);
+        }
+    }
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        refreshToolbar();
     }
 
     /** After events have been recieved, stop refreshing, update both the list and maps fragments. **/
@@ -100,7 +164,9 @@ public class MainActivity extends FragmentActivity implements EventsFragment.Eve
 
     /** Switches to maps fragment and zooms on a particular location   **/
     public void switchToMaps(Event event){
-        tabs.switchToTab(1);
+        //tabs.switchToTab(1);
+        pager.setCurrentItem(1);
+        refreshToolbar();
         MapsFragment.centreMapOnEvent(event);
     }
 
@@ -108,11 +174,92 @@ public class MainActivity extends FragmentActivity implements EventsFragment.Eve
      *  to the events list tab. **/
     @Override
     public void onBackPressed(){
-        if(tabs.getCurrentTabIndex() == 1) tabs.switchToTab(0);
+        if(pager.getCurrentItem() == 1) {
+            pager.setCurrentItem(0);
+            refreshToolbar();
+        }
         else finish();
     }
 
     public void setRefreshing(){
         adapter.getListFragment().setRefreshing(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch (id) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                pager.setCurrentItem(0);
+                refreshToolbar();
+                return true;
+
+            case R.id.action_maps:
+                pager.setCurrentItem(1);
+                refreshToolbar();
+                return true;
+
+            case R.id.action_settings:
+                openEventPreferenceDialog();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void openEventPreferenceDialog(){
+        DialogPlus dialog = DialogPlus.newDialog(this)
+                .setGravity(Gravity.CENTER)
+                .setContentHolder(new ViewHolder(R.layout.dialog_event_preferences))
+                .setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                    }
+                })
+                .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
+                .create();
+
+
+        dialog.show();
+    }
+
+
+    /** Animation methods for animation views out and back in. **/
+    public void animateViewOut(final View view){
+        view.animate()
+                .alpha(0.0f)
+                .setDuration(ANIMATION_DURATION)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        view.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    public void animateViewIn(final View view){
+        view.setVisibility(View.VISIBLE);
+        view.animate()
+                .alpha(1f)
+                .setDuration(ANIMATION_DURATION)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                    }
+                });
     }
 }

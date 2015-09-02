@@ -161,7 +161,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mViewPager = viewPager;
         if (viewPager != null) {
-            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            //viewPager.setOnPageChangeListener(new InternalViewPagerListener());
             populateTabStrip();
         }
     }
@@ -222,7 +222,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             }
 
             tabTitleView.setText(adapter.getPageTitle(i));
-            tabView.setOnClickListener(tabClickListener);
+            //tabView.setOnClickListener(tabClickListener);
             String desc = mContentDescriptions.get(i, null);
             if (desc != null) {
                 tabView.setContentDescription(desc);
@@ -272,46 +272,46 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            int tabStripChildCount = mTabStrip.getChildCount();
-            if ((tabStripChildCount == 0) || (position < 0) || (position >= tabStripChildCount)) {
-                return;
-            }
-
-            mTabStrip.onViewPagerPageChanged(position, positionOffset);
-
-            View selectedTitle = mTabStrip.getChildAt(position);
-            int extraOffset = (selectedTitle != null)
-                    ? (int) (positionOffset * selectedTitle.getWidth())
-                    : 0;
-            scrollToTab(position, extraOffset);
-
-            if (mViewPagerPageChangeListener != null) {
-                mViewPagerPageChangeListener.onPageScrolled(position, positionOffset,
-                        positionOffsetPixels);
-            }
+//            int tabStripChildCount = mTabStrip.getChildCount();
+//            if ((tabStripChildCount == 0) || (position < 0) || (position >= tabStripChildCount)) {
+//                return;
+//            }
+//
+//            mTabStrip.onViewPagerPageChanged(position, positionOffset);
+//
+//            View selectedTitle = mTabStrip.getChildAt(position);
+//            int extraOffset = (selectedTitle != null)
+//                    ? (int) (positionOffset * selectedTitle.getWidth())
+//                    : 0;
+//            scrollToTab(position, extraOffset);
+//
+//            if (mViewPagerPageChangeListener != null) {
+//                mViewPagerPageChangeListener.onPageScrolled(position, positionOffset,
+//                        positionOffsetPixels);
+//            }
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            mScrollState = state;
-
-            if (mViewPagerPageChangeListener != null) {
-                mViewPagerPageChangeListener.onPageScrollStateChanged(state);
-            }
+//            mScrollState = state;
+//
+//            if (mViewPagerPageChangeListener != null) {
+//                mViewPagerPageChangeListener.onPageScrollStateChanged(state);
+//            }
         }
 
         @Override
         public void onPageSelected(int position) {
-            if (mScrollState == ViewPager.SCROLL_STATE_IDLE) {
-                mTabStrip.onViewPagerPageChanged(position, 0f);
-                scrollToTab(position, 0);
-            }
-            for (int i = 0; i < mTabStrip.getChildCount(); i++) {
-                mTabStrip.getChildAt(i).setSelected(position == i);
-            }
-            if (mViewPagerPageChangeListener != null) {
-                mViewPagerPageChangeListener.onPageSelected(position);
-            }
+//            if (mScrollState == ViewPager.SCROLL_STATE_IDLE) {
+//                mTabStrip.onViewPagerPageChanged(position, 0f);
+//                scrollToTab(position, 0);
+//            }
+//            for (int i = 0; i < mTabStrip.getChildCount(); i++) {
+//                mTabStrip.getChildAt(i).setSelected(position == i);
+//            }
+//            if (mViewPagerPageChangeListener != null) {
+//                mViewPagerPageChangeListener.onPageSelected(position);
+//            }
         }
 
     }

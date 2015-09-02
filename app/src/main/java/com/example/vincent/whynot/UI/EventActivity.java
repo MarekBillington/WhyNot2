@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ public class EventActivity extends AppCompatActivity {
             addressTextView, timeTextView, restrictionsTextView, websiteTextView, ticketTextView;
     private ImageView websiteButton, ticketButton;
     private RelativeLayout banner;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,17 @@ public class EventActivity extends AppCompatActivity {
         int eventId = Integer.parseInt(bundle.getString("id"));
         event = MainActivity.applicationData.getEventByID(eventId);
 
+        initialiseToolbar();
         initialiseViews();
+    }
+
+    /** Initialise the toolbar **/
+    private void initialiseToolbar(){
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     /**

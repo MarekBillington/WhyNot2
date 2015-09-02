@@ -4,6 +4,11 @@
     android:layout_height="fill_parent"
     tools:context="com.example.vincent.whynot.UI.EventActivity">
 
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_event"
+        ></include>
+
     <RelativeLayout
         android:id="@+id/image_container"
         android:transitionName="container"
