@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         private RelativeLayout banner;
         private TextView nameTextView, categoryTextView, priceTextView,
                 distanceTextView, addressTextView, timeTextView;
+        private ImageView priceBanner;
 
         public ViewHolder(View v) {
             super(v);
@@ -52,8 +54,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
 
         public void initialiseViews(){
-            priceTextView = (TextView) v.findViewById(R.id.event_price);
-            priceTextView.setText(event.getCheapest());
+            priceBanner = (ImageView) v.findViewById(R.id.price_banner);
+            if(event.getCheapest().equals("Paid")) priceBanner.setVisibility(View.INVISIBLE);
+            else priceBanner.setVisibility(View.VISIBLE);
+
 
             categoryTextView = (TextView) v.findViewById(R.id.event_category);
             categoryTextView.setText(event.getCategoryString());
@@ -69,6 +73,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             addressTextView = (TextView) v.findViewById(R.id.event_location);
             addressTextView.setText("at " + event.getAddressShort());
 
+            /** Clicking on the globe icon, distance or address opens the location. **/
+            addressTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    eventsFragment.openLocation(event);
+                }
+            });
 
             distanceTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -108,6 +119,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                                        View distance, View time, View compass){
             Intent intent = new Intent(context, EventActivity.class);
             intent.putExtra("id", event.getId());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             // Only animate with transitions if SDK 21 or above
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

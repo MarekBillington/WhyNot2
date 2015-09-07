@@ -6,6 +6,9 @@ package com.example.vincent.whynot.UI.dummy;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.ListFragment;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.UI.MainActivity;
@@ -19,44 +22,62 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
     /** The 2 fragment are stored as variables, to be referred to later. **/
-    private App app;
-    private MapsFragment mapsFragment;
-    private MainActivity mainActivity;
-    private EventsFragment listFragment;
+    private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(App app, MainActivity mainActivity,FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ViewPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
 
-        this.app = app;
-        this.mainActivity = mainActivity;
         this.Titles = mTitles;
         this.NumbOfTabs = mNumbOfTabsumb;
 
-        initialiseFragments();
+        //initialiseFragments();
     }
 
     private void initialiseFragments(){
         System.out.println("Testing initialising frags");
-        listFragment = new EventsFragment();
-        listFragment.setMainActivity(mainActivity);
-
-        if(mapsFragment == null) mapsFragment = new MapsFragment();
-        mapsFragment.setApp(app);
-        mapsFragment.setRetainInstance(true);
-        mapsFragment.setUpMapIfNeeded();
+        //listFragment = new EventsFragment();
+//
+//        if(mapsFragment == null) mapsFragment = new MapsFragment();
+//        mapsFragment.setRetainInstance(true);
+//        mapsFragment.setUpMapIfNeeded();
     }
 
     @Override
     public Fragment getItem(int position) {
-        if(position == 0) return listFragment;
-        else return mapsFragment;
+        //initialiseFragments();
+        if(position == 0) {
+            EventsFragment listFragment = new EventsFragment();
+            return listFragment;
+        } else {
+            MapsFragment mapsFragment = new MapsFragment();
+            mapsFragment.setRetainInstance(true);
+            mapsFragment.setUpMapIfNeeded();
+            return mapsFragment;
+        }
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        registeredFragments.put(position, fragment);
+        return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        registeredFragments.remove(position);
+        super.destroyItem(container, position, object);
+    }
+
+    public Fragment getRegisteredFragment(int position) {
+        return registeredFragments.get(position);
     }
 
 
     public void updateList(){
-        listFragment.updateList(this.app);
+        ((EventsFragment) registeredFragments.get(0)).updateList();
     }
 
     // This method return the titles for the Tabs in the Tab Strip
@@ -74,9 +95,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public MapsFragment getMapsFragment() {
-        return mapsFragment;
+        return (MapsFragment) getRegisteredFragment(1);
     }
     public EventsFragment getListFragment() {
-        return listFragment;
+        return (EventsFragment) getRegisteredFragment(0);
     }
 }

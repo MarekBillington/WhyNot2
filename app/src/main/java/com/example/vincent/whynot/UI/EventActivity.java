@@ -82,6 +82,10 @@ public class EventActivity extends AppCompatActivity {
 
         restrictionsTextView = (TextView) findViewById(R.id.event_restrictions);
         restrictionsTextView.setText("Event rated: " + event.getRestrictions());
+
+//        priceBanner = (ImageView)findViewById(R.id.price_banner);
+//        if(event.getCheapest().equals("Paid")) priceBanner.setVisibility(View.INVISIBLE);
+//        else priceBanner.setVisibility(View.VISIBLE);
 //
 //        // Change to maps fragment and go to location
 //        final Location eventLocation = new Location("");

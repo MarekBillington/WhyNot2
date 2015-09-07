@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -22,10 +23,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.vincent.whynot.App;
 import com.example.vincent.whynot.R;
@@ -34,10 +38,7 @@ import com.example.vincent.whynot.UI.dummy.EventsFragment;
 import com.example.vincent.whynot.UI.dummy.MapsFragment;
 import com.example.vincent.whynot.UI.dummy.SlidingTabLayout;
 import com.example.vincent.whynot.UI.dummy.ViewPagerAdapter;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnItemClickListener;
-import com.orhanobut.dialogplus.ViewHolder;
-import com.squareup.picasso.Picasso;
+
 
 /**
  * The main activity, containing a view pager that contains 2 fragments, a list fragment
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.Ev
     private SlidingTabLayout tabs;
     private Toolbar toolbar;
     private Menu menu;
+    private View dialogView;
 
     private static final CharSequence TITLES[] = {"Events", "Map"};
     private static final int NUMBOFTABS = 2;
@@ -64,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.Ev
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        //requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         super.onCreate(savedInstanceState);
 
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.Ev
         }
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, TITLES fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(applicationData, this,fragmentManager, TITLES, NUMBOFTABS);
+        adapter =  new ViewPagerAdapter(fragmentManager, TITLES, NUMBOFTABS);
 
         // Assigning ViewPager View and setting the adapter
         pager = (EventViewPager) findViewById(R.id.pager);
@@ -145,12 +147,13 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.Ev
     @Override
     public void onResume(){
         super.onResume();
+
         refreshToolbar();
     }
 
     /** After events have been recieved, stop refreshing, update both the list and maps fragments. **/
-    public void updateFromEvents(App app){
-        adapter.getMapsFragment().placeMarkers(app);
+    public void updateFromEvents(){
+        adapter.getMapsFragment().placeMarkers();
         adapter.updateList();
     }
 
@@ -219,24 +222,77 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.Ev
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Preference Dialog methods
+     */
+
     public void openEventPreferenceDialog(){
-        DialogPlus dialog = DialogPlus.newDialog(this)
-                .setGravity(Gravity.CENTER)
-                .setContentHolder(new ViewHolder(R.layout.dialog_event_preferences))
-                .setOnItemClickListener(new OnItemClickListener() {
+        dialogView = null;
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Preferences")
+                .titleColorRes(R.color.colorAccent)
+                .dividerColorRes(R.color.colorAccent)
+                .customView(R.layout.dialog_event_preferences, true)
+                .positiveText("OK")
+                .callback(new MaterialDialog.ButtonCallback() {
                     @Override
-                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        updatePreferences();
                     }
                 })
-                .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
-                .create();
-
-
-        dialog.show();
+                .show();
+        dialogView = dialog.getCustomView();
+        initialiseEventPreferenceDialog(dialogView);
     }
 
+    /** Intialises the dialogs widgets. **/
+    public void initialiseEventPreferenceDialog(View dialogView){
+        ((com.rey.material.widget.Slider) dialogView.findViewById(R.id.radiusSlider)).setValue((float) App.radiusLength, true);
+        ((CheckBox) dialogView.findViewById(R.id.gigsCheckBox)).setChecked(App.gigs);
+        ((CheckBox) dialogView.findViewById(R.id.festivalsCheckBox)).setChecked(App.festivals);
+        ((CheckBox) dialogView.findViewById(R.id.workshopClassesCheckBox)).setChecked(App.workshopsClasses);
+        ((CheckBox) dialogView.findViewById(R.id.exhibitionsCheckBox)).setChecked(App.exhibitions);
+        ((CheckBox) dialogView.findViewById(R.id.performingArtsCheckBox)).setChecked(App.performingArts);
+        ((CheckBox) dialogView.findViewById(R.id.sportsCheckBox)).setChecked(App.sports);
 
-    /** Animation methods for animation views out and back in. **/
+        com.rey.material.widget.Spinner spinner = (com.rey.material.widget.Spinner) dialogView.findViewById(R.id.orderSpinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.order_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(App.order);
+    }
+
+    /** Update the preferences by gathering the data from the dialogs widgets. **/
+    public void updatePreferences(){
+        float radius = ((com.rey.material.widget.Slider) dialogView.findViewById(R.id.radiusSlider)).getExactValue();
+        int order = ((com.rey.material.widget.Spinner) dialogView.findViewById(R.id.orderSpinner)).getSelectedItemPosition();
+        boolean gigs = ((CheckBox) dialogView.findViewById(R.id.gigsCheckBox)).isChecked();
+        boolean festivals = ((CheckBox) dialogView.findViewById(R.id.festivalsCheckBox)).isChecked();
+        boolean workshopsClasses = ((CheckBox) dialogView.findViewById(R.id.workshopClassesCheckBox)).isChecked();
+        boolean exhibitions = ((CheckBox) dialogView.findViewById(R.id.exhibitionsCheckBox)).isChecked();
+        boolean performingArts = ((CheckBox) dialogView.findViewById(R.id.performingArtsCheckBox)).isChecked();
+        boolean sports = ((CheckBox) dialogView.findViewById(R.id.sportsCheckBox)).isChecked();
+
+        // Check the user has chosen atleast 1 category
+        if(!gigs && !festivals && !workshopsClasses && ! exhibitions && !performingArts && !sports)
+            Toast.makeText(this, "You must choose at least 1 category.", Toast.LENGTH_LONG).show();
+        // Check the user has changed at least 1 preference
+        else if(!App.checkPreferencesHaveChanged((int) radius, order, gigs, festivals, workshopsClasses, exhibitions, performingArts, sports));
+        else {
+            App.app.getPreferencesManager().updatePreferences((int) radius, order, gigs, festivals, workshopsClasses, exhibitions, performingArts, sports);
+            App.app.startAsyncTaskChain();
+            adapter.getListFragment().setRefreshing(true);
+        }
+    }
+
+    /**
+     * Animation methods for animation views out and back in.
+     */
+
     public void animateViewOut(final View view){
         view.animate()
                 .alpha(0.0f)

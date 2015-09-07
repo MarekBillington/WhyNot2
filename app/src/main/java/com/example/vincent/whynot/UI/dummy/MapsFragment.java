@@ -34,8 +34,6 @@ public class MapsFragment extends SupportMapFragment {
 
     public static GoogleMap mMap;
 
-    private App app;
-
     /** If the map hasn't been retrieved, get it, then set it up, otherwise set it up straight away.**/
     public void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
@@ -76,14 +74,14 @@ public class MapsFragment extends SupportMapFragment {
         // Set the info window adapter, place the markers if the events have already loaded, and
         // Centre the map on the user if the location has been retrieved.
         mMap.setInfoWindowAdapter(new EventInfoWindowAdapter());
-        if(!app.getEventsArray().isEmpty()) placeMarkers(app);
+        if(!App.app.getEventsArray().isEmpty()) placeMarkers();
         if(App.userLocation != null) centreMapOnLocation(App.userLocation, INITIAL_HEIGHT);
     }
 
     /** Places all the event markers on the map. */
-    public void placeMarkers(App app){
+    public void placeMarkers(){
         mMap.clear();
-       for(Event e: app.getEventsArray()) {
+       for(Event e: App.app.getEventsArray()) {
            mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(e.getLatitude(), e.getLongitude()))
                     .title(e.getName())
@@ -100,10 +98,6 @@ public class MapsFragment extends SupportMapFragment {
             if(Integer.parseInt(marker.getSnippet()) == id) return marker;
         }
         return null;
-    }
-
-    public void setApp(App app){
-        this.app = app;
     }
 
     /** Focuses zoom on to given location. **/

@@ -1,6 +1,7 @@
 package com.example.vincent.whynot.Backend;
 
 import com.example.vincent.whynot.App;
+import com.example.vincent.whynot.UI.Event;
 
 import android.location.Location;
 import android.os.AsyncTask;
@@ -81,12 +82,14 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
                 url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date" +
                         "&rows=20" +
                         "&end_date=2015-08-13%2023:59:59" +
-                        "&offset=" + offset);
+                        "&offset=" + offset +
+                        getCategories());
             } else {
                 url = new URL("http://api.eventfinda.co.nz/v2/events.xml?order=date" +
                         "&rows=20" +
                         "&end_date=" + getEndDateTimeString() +
                         "&offset=" + offset +
+                        getCategories() +
                         "&point=" + getUserLocationCoordinateString() +
                         "&radius=" + myApp.getRadiusLength());
             }
@@ -177,5 +180,19 @@ public class ConnectToRESTAsyncTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    /** Get the categories that the user has in their preferences to be appended to,
+     * the REST request. **/
+
+    private String getCategories(){
+        String output = "&category=";
+        if (App.gigs) output += Event.CATEGORY_CONCERTS_GIG + ",";
+        if (App.festivals) output += Event.CATEGORY_FESTIVALS_LIFESTYLE + ",";
+        if (App.workshopsClasses) output += Event.CATEGORY_WORKSHOPS_CLASSES + ",";
+        if (App.exhibitions) output += Event.CATEGORY_EXHIBITIONS + ",";
+        if (App.performingArts) output += Event.CATEGORY_PERFORMING_ARTS + ",";
+        if (App.sports) output += Event.CATEGORY_SPORTS_OUTDOORS;
+        return output;
     }
 }

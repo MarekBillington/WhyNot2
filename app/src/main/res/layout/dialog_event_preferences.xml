@@ -1,25 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/preference_category_header_text"
+        android:id="@+id/preferenceCategoryHeaderTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/sep1"
+
+        android:layout_marginBottom="16dp"/>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="2"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/categoryCheckboxGridLayout"
+        android:layout_below="@id/preferenceCategoryHeaderTextView">
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New CheckBox"
-        android:id="@+id/checkBox"
-        android:layout_gravity="center_horizontal" />
+        android:text="@string/category_gigs_text"
+        android:id="@+id/gigsCheckBox"
+        android:textSize="12sp"
+        android:checked="false" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New CheckBox"
-        android:id="@+id/checkBox2" />
+        android:text="@string/category_workshops_text"
+        android:id="@+id/workshopClassesCheckBox"
+        android:textSize="12sp"
+        android:checked="false" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New CheckBox"
-        android:id="@+id/checkBox3"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        android:text="@string/category_sports_text"
+        android:id="@+id/sportsCheckBox"
+        android:textSize="12sp"
+ />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/category_festivals_text"
+        android:id="@+id/festivalsCheckBox"
+        android:textSize="12sp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/category_performing_text"
+        android:id="@+id/performingArtsCheckBox"
+        android:textSize="12sp"
+/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/category_exhibitions_text"
+        android:id="@+id/exhibitionsCheckBox"
+        android:textSize="12sp"
+/>
+    </GridLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/preference_radius_header_text"
+        android:id="@+id/preferenceRadiusHeaderTextView"
+        android:layout_below="@id/categoryCheckboxGridLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"/>
+
+    <com.rey.material.widget.Slider
+        style="@style/Material.Widget.Slider.Discrete"
+        android:id="@+id/radiusSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/preferenceRadiusHeaderTextView"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        app:sl_minValue="1"
+        app:sl_maxValue="20"
+        app:sl_value="10"
+        app:sl_travelAnimDuration="50"
+        app:sl_primaryColor="@color/ColorPrimary"
+        app:sl_secondaryColor="@color/ColorPrimaryDark"
+        app:sl_alwaysFillThumb="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/preference_spinner_header_text"
+        android:id="@+id/preferenceSpinnerHeaderTextView"
+        android:layout_below="@id/radiusSlider"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"/>
+
+    <com.rey.material.widget.Spinner
+        style="@style/Material.Widget.Spinner"
+        android:id="@+id/orderSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/preferenceSpinnerHeaderTextView"
+        android:layout_centerHorizontal="true"
+        app:spn_dividerPadding="0dp"
+        app:spn_dividerHeight="0dp"
+        app:spn_labelPadding="0dp"/>
+
+
+
+
+</RelativeLayout>

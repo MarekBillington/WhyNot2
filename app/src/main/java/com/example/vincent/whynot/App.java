@@ -9,9 +9,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.vincent.whynot.Backend.ConnectToRESTAsyncTask;
 import com.example.vincent.whynot.Backend.LocationManagerAsyncTask;
+import com.example.vincent.whynot.Backend.PreferencesManager;
 import com.example.vincent.whynot.Backend.XMLParserAsyncTask;
 import com.example.vincent.whynot.UI.Event;
 import com.example.vincent.whynot.UI.EventBackgroundTarget;
@@ -22,19 +24,24 @@ import com.squareup.picasso.Target;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class App extends Application{
 
+    public static final int ORDER_CLOSEST = 0, ORDER_CHEAPEST = 1, ORDER_EARLIEST = 2;
+
     public static App app;
     public MainActivity myActivity;
     private Context myContext;
     public static Location userLocation;
+    public PreferencesManager preferencesManager;
 
     /** Buffer array holds all events until all async requests have finished.
      * This means the app can still function while making requests. **/
-    public static CopyOnWriteArrayList<Event> eventsArray = new CopyOnWriteArrayList<>();
+    public boolean refreshing = false;
+    public static ArrayList<Event> eventsArray = new ArrayList<>();
     private CopyOnWriteArrayList<Event> bufferArray = new CopyOnWriteArrayList<>();
 
     /** To hold strong references to the targets so that they don't get garbage collected. **/
@@ -44,11 +51,13 @@ public class App extends Application{
     private int offset = 0;
     private int eventsCount = 0;
     public static double radiusLength = 5;
+    public static boolean gigs = true, festivals = true, workshopsClasses = true, exhibitions = true, performingArts = true,
+                    sports = true;
+    public static int order = 0;
 
     /** Login details for EventFinda API. **/
     private static final String eventFindaAPIUsername = "whynot";
     private static final String eventFindaAPIPassword = "kd87ymx3txqv";
-
 
     public App(Context context, MainActivity mainActivity) {
         super.onCreate();
@@ -56,6 +65,10 @@ public class App extends Application{
         myActivity = mainActivity;
         // Holds reference to Applications overall context
         myContext = context;
+        app = this;
+        preferencesManager = new PreferencesManager(myContext);
+        preferencesManager.loadPreferences();
+
         // Set the overall HTTP Authentication credentials
         setEventFindaAPIAuthentication();
         // Begin the chain of async tasks that will eventually
@@ -80,6 +93,7 @@ public class App extends Application{
         // the returned xml file are initialised within each preceding
         // async task in a chain like format
         bufferArray.clear();
+        refreshing = true;
         getUserLocationFromGPS();
     }
 
@@ -130,9 +144,12 @@ public class App extends Application{
         }
     }
 
+    /** Transfer the events from the buffer array and then sort them. **/
     public void transferEventsFromBuffer(){
-        eventsArray = new CopyOnWriteArrayList<>(bufferArray);
-        //bufferArray.clear();
+        eventsArray = new ArrayList<>(bufferArray);
+        if(App.order == App.ORDER_CLOSEST) Collections.sort(eventsArray, Event.ProximityComparator);
+        else if(App.order == App.ORDER_CHEAPEST) Collections.sort(eventsArray, Event.PriceComparator);
+        else if(App.order == App.ORDER_EARLIEST) Toast.makeText(this, "Order by earliest not supported yet.", Toast.LENGTH_LONG).show();//Collections.sort(eventsArray, Event.TimeComparator);
     }
 
     public void setOffset(int newOffset) {
@@ -177,11 +194,30 @@ public class App extends Application{
         }
     }
 
+    /**
+     * Check to see if the user has changed any preferences
+     * **/
+    public static boolean checkPreferencesHaveChanged(int radius, int order, boolean gigs, boolean festivals, boolean workshopsClasses, boolean exhibitions,
+                                                boolean performingArts, boolean sports){
+        if(App.radiusLength != radius) return true;
+        else if(App.order != order) return true;
+        else if(App.gigs != gigs) return true;
+        else if(App.festivals != festivals) return true;
+        else if(App.workshopsClasses != workshopsClasses) return true;
+        else if(App.exhibitions != exhibitions) return true;
+        else if(App.performingArts != performingArts) return true;
+        else if(App.sports != sports) return true;
+
+        return false;
+    }
+
+    public PreferencesManager getPreferencesManager(){return preferencesManager;}
+
     public Location getUserLocation() {
         return userLocation;
     }
 
-    public CopyOnWriteArrayList<Event> getEventsArray() {
+    public ArrayList<Event> getEventsArray() {
         return eventsArray;
     }
 

@@ -62,7 +62,8 @@ public class XMLParserAsyncTask extends AsyncTask<Void, Void, String> {
                     "or equal to the number of events (offset = " + offset + ", events count = " +
                     myApp.getEventsCount() + "). Calling update from events :)");
             myApp.transferEventsFromBuffer();
-            myApp.myActivity.updateFromEvents(myApp);
+            myApp.refreshing = false;
+            myApp.myActivity.updateFromEvents();
             myApp.setOffset(0);
         }
     }

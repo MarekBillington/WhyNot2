@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -225,8 +226,8 @@ public class Event {
 
     /** Returns the name of the event to a max length of 50 chars. **/
     public String formatName(){
-        if (name.length() > 50){
-            return name.substring(0, 50) + "...";
+        if (name.length() > 35){
+            return name.substring(0, 35) + "...";
         } else{
             return name;
         }
@@ -369,4 +370,48 @@ public class Event {
     public void setImg_url(String img_url) {
         this.img_url = img_url;
     }
+
+    /**
+     * Comparators for sorting.
+     * **/
+
+    /** Order events by proximity, closest events prioritised. **/
+    public static Comparator<Event> ProximityComparator = new Comparator<Event>() {
+
+        public int compare(Event event1, Event event2) {
+            float event1Distance = App.userLocation.distanceTo(event1.getLocation());
+            float event2Distance = App.userLocation.distanceTo(event2.getLocation());
+            int ordering = -1;
+            if(event1Distance > event2Distance) ordering = 1;
+            else if(event1Distance == event2Distance) ordering = 0;
+
+            return ordering;
+
+        }};
+
+    /** Order events by price, cheapest events prioritised. **/
+    public static Comparator<Event> PriceComparator = new Comparator<Event>() {
+
+        public int compare(Event event1, Event event2) {
+
+            int ordering = 0;
+            if(event1.getCheapest().equals("Free") && event2.getCheapest().equals("Paid")) ordering = -1;
+            else if(event1.getCheapest().equals("Paid") && event2.getCheapest().equals("Free")) ordering = 1;
+
+            return ordering;
+
+        }};
+
+    /** Order events by proximity, closest events prioritised. **/
+    /** Needs to be fixed, cannot parse time String in it's current format. **/
+    public static Comparator<Event> TimeComparator = new Comparator<Event>() {
+
+        public int compare(Event event1, Event event2) {
+
+            Date event1Time = new Date(Date.parse(event1.getDt_start()));
+            Date event2Time = new Date(Date.parse(event1.getDt_start()));
+
+            return event1Time.compareTo(event2Time);
+
+        }};
 }

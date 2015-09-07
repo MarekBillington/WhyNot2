@@ -40,14 +40,13 @@ public class EventsFragment extends Fragment {
 
     public static final int ANIMATION_DURATION = 150;// Time in ms of event item transitions
 
-    private MainActivity mainActivity = null;
     private Context context;
     private PullRefreshLayout pullToRefreshLayout;
 
     /** Recycler view variables. **/
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private EventsAdapter eventsAdapter;
+    private RecyclerView.Adapter adapter;
 
     private EventsFragmentListener mapsCallback;
 
@@ -62,6 +61,12 @@ public class EventsFragment extends Fragment {
         initialisePullToRefresh(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        //initialisePullToRefresh();
     }
 
     /** Make sure the Activity implements EventsFragmentListener, otherwise throw an exception. **/
@@ -91,14 +96,15 @@ public class EventsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Specify the adapter and add animations
-        eventsAdapter = new EventsAdapter(getActivity(), this);
+        EventsAdapter eventsAdapter = new EventsAdapter(getActivity(), this);
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(eventsAdapter);
         alphaAdapter.setDuration(ANIMATION_DURATION);
         alphaAdapter.setInterpolator(new OvershootInterpolator());
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
 
         scaleAdapter.setDuration(ANIMATION_DURATION);
-        recyclerView.setAdapter(scaleAdapter);
+        adapter = scaleAdapter;
+        recyclerView.setAdapter(adapter);
 
         //recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(0));
         recyclerView.setItemAnimator(new SlideInLeftAnimator());
@@ -117,25 +123,24 @@ public class EventsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 // Send another request for all the events.
-                mainActivity.applicationData.startAsyncTaskChain();
+                App.app.startAsyncTaskChain();
             }
         });
         // For now, the app will be refreshing from the start
-        if (App.eventsArray.isEmpty()) setRefreshing(true);
+        setRefreshing(App.app.refreshing);
+        System.out.println("Testing: refreshing = " + App.app.refreshing);
     }
 
     public void setRefreshing(boolean refreshing){
         pullToRefreshLayout.setRefreshing(refreshing);
     }
 
-    /** Remove all event item in the list and re add them. **/
-    public void updateList(App app){
+    public void updateList(){
         pullToRefreshLayout.setRefreshing(false);
+        System.out.println("Testing: refreshing finished");
+        adapter.notifyDataSetChanged();
     }
 
-    public void setMainActivity(MainActivity mainActivity){
-        this.mainActivity = mainActivity;
-    }
 
     /**
      * Spacing for the RecyclerView
@@ -162,5 +167,19 @@ public class EventsFragment extends Fragment {
         public void switchToMaps(Event event);
     }
 
+    public RecyclerView.Adapter getEventsAdapter() {
+        return adapter;
+    }
 
+    public void setEventsAdapter(RecyclerView.Adapter eventsAdapter) {
+        this.adapter = eventsAdapter;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
 }

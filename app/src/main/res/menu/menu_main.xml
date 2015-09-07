@@ -1,9 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    tools:context=".MainActivity"
+    android:theme="@style/MyTheme">
+    <item android:id="@+id/action_settings" android:title="@string/action_preferences"
+        android:orderInCategory="100" app:showAsAction="never">
+    <shape android:shape="rectangle">
+        <stroke android:width="2dp" android:color="#FF000000" />
+        <solid android:color="#FF2070B0" />
+    </shape>
+    </item>
     <item
         android:id="@+id/action_maps"
         android:orderInCategory="200"
