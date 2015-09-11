@@ -19,4 +19,12 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="ToolTipLayoutCustomStyle">
+        <item name="ttlm_padding">25dip</item>
+        <item name="ttlm_strokeColor">#00ffffff</item>
+        <item name="ttlm_backgroundColor">@color/ColorPrimary</item>
+        <item name="ttlm_strokeWeight">0dip</item>
+        <item name="ttlm_cornerRadius">8dip</item>
+    </style>
+
 </resources>

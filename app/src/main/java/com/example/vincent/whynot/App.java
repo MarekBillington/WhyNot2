@@ -11,13 +11,13 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.vincent.whynot.Backend.ConnectToRESTAsyncTask;
-import com.example.vincent.whynot.Backend.LocationManagerAsyncTask;
+import com.example.vincent.whynot.Backend.AsyncTasks.ConnectToRESTAsyncTask;
+import com.example.vincent.whynot.Backend.AsyncTasks.LocationManagerAsyncTask;
 import com.example.vincent.whynot.Backend.PreferencesManager;
-import com.example.vincent.whynot.Backend.XMLParserAsyncTask;
-import com.example.vincent.whynot.UI.Event;
-import com.example.vincent.whynot.UI.EventBackgroundTarget;
-import com.example.vincent.whynot.UI.MainActivity;
+import com.example.vincent.whynot.Backend.AsyncTasks.XMLParserAsyncTask;
+import com.example.vincent.whynot.UI.EventClasses.Event;
+import com.example.vincent.whynot.UI.EventClasses.EventBackgroundTarget;
+import com.example.vincent.whynot.UI.Activities.MainActivity;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -25,10 +25,12 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class App extends Application{
+public class App extends Application {
 
     public static final int ORDER_CLOSEST = 0, ORDER_CHEAPEST = 1, ORDER_EARLIEST = 2;
 
@@ -38,24 +40,40 @@ public class App extends Application{
     public static Location userLocation;
     public PreferencesManager preferencesManager;
 
-    /** Buffer array holds all events until all async requests have finished.
-     * This means the app can still function while making requests. **/
+    /**
+     * Refreshing is set to true whenever events are being requested.
+     * Waiting request is set to true whenever another request is made before the first
+     * request finishes.
+     **/
     public boolean refreshing = false;
-    public static ArrayList<Event> eventsArray = new ArrayList<>();
+    public boolean waitingRequest = false;
+
+    /**
+     * Buffer array holds all events until all async requests have finished.
+     * This means the app can still function while making requests.
+     **/
+    public ArrayList<Event> eventsArray = new ArrayList<>();
+    public ArrayList<Event> watchlistArray = new ArrayList<>();
     private CopyOnWriteArrayList<Event> bufferArray = new CopyOnWriteArrayList<>();
 
-    /** To hold strong references to the targets so that they don't get garbage collected. **/
+    /**
+     * To hold strong references to the targets so that they don't get garbage collected.
+     **/
     public static ArrayList<Target> targets = new ArrayList<>();
 
-    /** Fields for EventFinda requests. **/
+    /**
+     * Fields for EventFinda requests.
+     **/
     private int offset = 0;
     private int eventsCount = 0;
     public static double radiusLength = 5;
     public static boolean gigs = true, festivals = true, workshopsClasses = true, exhibitions = true, performingArts = true,
-                    sports = true;
+            sports = true;
     public static int order = 0;
 
-    /** Login details for EventFinda API. **/
+    /**
+     * Login details for EventFinda API.
+     **/
     private static final String eventFindaAPIUsername = "whynot";
     private static final String eventFindaAPIPassword = "kd87ymx3txqv";
 
@@ -68,6 +86,7 @@ public class App extends Application{
         app = this;
         preferencesManager = new PreferencesManager(myContext);
         preferencesManager.loadPreferences();
+        preferencesManager.loadWatchlist();
 
         // Set the overall HTTP Authentication credentials
         setEventFindaAPIAuthentication();
@@ -92,9 +111,16 @@ public class App extends Application{
         // additional async task for requesting the data and parsing
         // the returned xml file are initialised within each preceding
         // async task in a chain like format
-        bufferArray.clear();
-        refreshing = true;
-        getUserLocationFromGPS();
+        System.out.println("Testing: Sending new eventfinda request");
+        if (!refreshing) { // New request
+            bufferArray.clear();
+            refreshing = true;
+            waitingRequest = false;
+            getUserLocationFromGPS();
+        } else { // Multiple simultaneous requests
+            waitingRequest = true;
+        }
+
     }
 
     // Functions for creating and executing relevant async tasks,
@@ -144,12 +170,17 @@ public class App extends Application{
         }
     }
 
-    /** Transfer the events from the buffer array and then sort them. **/
-    public void transferEventsFromBuffer(){
+    /**
+     * Transfer the events from the buffer array and then sort them.
+     **/
+    public void transferEventsFromBuffer() {
         eventsArray = new ArrayList<>(bufferArray);
-        if(App.order == App.ORDER_CLOSEST) Collections.sort(eventsArray, Event.ProximityComparator);
-        else if(App.order == App.ORDER_CHEAPEST) Collections.sort(eventsArray, Event.PriceComparator);
-        else if(App.order == App.ORDER_EARLIEST) Toast.makeText(this, "Order by earliest not supported yet.", Toast.LENGTH_LONG).show();//Collections.sort(eventsArray, Event.TimeComparator);
+        if (App.order == App.ORDER_CLOSEST)
+            Collections.sort(eventsArray, Event.ProximityComparator);
+        else if (App.order == App.ORDER_CHEAPEST)
+            Collections.sort(eventsArray, Event.PriceComparator);
+        else if (App.order == App.ORDER_EARLIEST)
+            System.out.println("Order by earliest not supported yet.");//Collections.sort(eventsArray, Event.TimeComparator);
     }
 
     public void setOffset(int newOffset) {
@@ -162,9 +193,9 @@ public class App extends Application{
         eventsCount = newEventsCount;
     }
 
-    public static Event getEventByID(int id){
-        for(Event event: eventsArray){
-            if(Integer.parseInt(event.getId()) == id) return event;
+    public Event getEventByID(int id) {
+        for (Event event : eventsArray) {
+            if (Integer.parseInt(event.getId()) == id) return event;
         }
         return null;
     }
@@ -175,43 +206,44 @@ public class App extends Application{
      **/
     public static void setEventImage(Activity activity, View banner, Event event) {
         EventBackgroundTarget eventBackgroundTarget = new EventBackgroundTarget(activity, banner);
-        if (!event.getImg_url().isEmpty()) {
-            Picasso.with(activity).load(event.getImg_url()).resize(650, 280).centerCrop().into(eventBackgroundTarget);
-            App.targets.add(eventBackgroundTarget);
-        } else {
-            if (event.getCategory() == Event.CATEGORY_CONCERTS_GIG)
-                banner.setBackgroundResource(R.drawable.gigs);
-            else if (event.getCategory() == Event.CATEGORY_EXHIBITIONS)
-                banner.setBackgroundResource(R.drawable.exhibition);
-            else if (event.getCategory() == Event.CATEGORY_PERFORMING_ARTS)
-                banner.setBackgroundResource(R.drawable.perform_arts);
-            else if (event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS)
-                banner.setBackgroundResource(R.drawable.sports);
-            else if (event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES)
-                banner.setBackgroundResource(R.drawable.workshop);
-            else if (event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE)
-                banner.setBackgroundResource(R.drawable.festivals);
+        if (!event.getImageUrl().isEmpty()) {
+            Picasso.with(activity).load(event.getImageUrl()).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_CONCERTS_GIG) {
+            Picasso.with(activity).load(R.drawable.gigs).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_EXHIBITIONS) {
+            Picasso.with(activity).load(R.drawable.exhibition).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_PERFORMING_ARTS) {
+            Picasso.with(activity).load(R.drawable.perform_arts).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_SPORTS_OUTDOORS) {
+            Picasso.with(activity).load(R.drawable.sports).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_WORKSHOPS_CLASSES) {
+            Picasso.with(activity).load(R.drawable.workshop).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
+        } else if (event.getCategory() == Event.CATEGORY_FESTIVALS_LIFESTYLE) {
+            Picasso.with(activity).load(R.drawable.festivals).placeholder(R.drawable.placeholder).into(eventBackgroundTarget);
         }
+        App.targets.add(eventBackgroundTarget);
     }
 
     /**
      * Check to see if the user has changed any preferences
-     * **/
+     **/
     public static boolean checkPreferencesHaveChanged(int radius, int order, boolean gigs, boolean festivals, boolean workshopsClasses, boolean exhibitions,
-                                                boolean performingArts, boolean sports){
-        if(App.radiusLength != radius) return true;
-        else if(App.order != order) return true;
-        else if(App.gigs != gigs) return true;
-        else if(App.festivals != festivals) return true;
-        else if(App.workshopsClasses != workshopsClasses) return true;
-        else if(App.exhibitions != exhibitions) return true;
-        else if(App.performingArts != performingArts) return true;
-        else if(App.sports != sports) return true;
+                                                      boolean performingArts, boolean sports) {
+        if (App.radiusLength != radius) return true;
+        else if (App.order != order) return true;
+        else if (App.gigs != gigs) return true;
+        else if (App.festivals != festivals) return true;
+        else if (App.workshopsClasses != workshopsClasses) return true;
+        else if (App.exhibitions != exhibitions) return true;
+        else if (App.performingArts != performingArts) return true;
+        else if (App.sports != sports) return true;
 
         return false;
     }
 
-    public PreferencesManager getPreferencesManager(){return preferencesManager;}
+    public PreferencesManager getPreferencesManager() {
+        return preferencesManager;
+    }
 
     public Location getUserLocation() {
         return userLocation;

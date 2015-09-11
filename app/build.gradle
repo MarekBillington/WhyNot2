@@ -37,4 +37,5 @@ dependencies {
     compile 'com.androidmapsextensions:android-maps-extensions:2.2.0'
     compile 'com.afollestad:material-dialogs:0.7.9.1'
     compile 'com.github.rey5137:material:1.2.1.6-SNAPSHOT'
+    compile 'it.sephiroth.android.library.targettooltip:target-tooltip-library:1.2.9@aar'
 }
