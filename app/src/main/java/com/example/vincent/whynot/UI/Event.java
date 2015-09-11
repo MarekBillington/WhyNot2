@@ -226,8 +226,8 @@ public class Event {
 
     /** Returns the name of the event to a max length of 50 chars. **/
     public String formatName(){
-        if (name.length() > 35){
-            return name.substring(0, 35) + "...";
+        if (name.length() > 32){
+            return name.substring(0, 32) + "...";
         } else{
             return name;
         }

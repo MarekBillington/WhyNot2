@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.vincent.whynot.UI.EventActivity"
+    android:background="#ffffff">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_event"
+        ></include>
+
+    <RelativeLayout
+        android:id="@+id/image_container"
+        android:transitionName="container"
+        android:background="@drawable/gigs"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        >
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/scrollView_all"
+        layout="@layout/activity_event_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_container"
+        android:layout_above="@id/layout_buttons"
+        ></include>
+
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/ColorPrimary"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:weightSum="6"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/button_website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:src="@drawable/ic_earth_white_24dp"></ImageView>
+
+        <TextView
+            android:id="@+id/text_website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/button_website_text"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/button_ticket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:src="@drawable/ic_bookmark_white_24dp"></ImageView>
+
+        <TextView
+            android:id="@+id/text_tickets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/button_tickets_text"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/button_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:src="@drawable/ic_directions_white_24dp"></ImageView>
+
+        <TextView
+            android:id="@+id/text_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/button_route_text"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>

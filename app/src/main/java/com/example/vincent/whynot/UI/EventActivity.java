@@ -3,9 +3,11 @@ package com.example.vincent.whynot.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,10 +39,14 @@ public class EventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Allow transitions
-        getWindow().setExitTransition(new Fade());
-        getWindow().setEnterTransition(new Fade());
-        setContentView(R.layout.activity_event);
+
+        // allow transitions if API is Lollipop or above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setExitTransition(new Fade());
+            getWindow().setEnterTransition(new Fade());
+        }
+
+        setContentView(R.layout.activity_event_polished);
 
         this.context = getApplicationContext();
 
@@ -70,7 +76,7 @@ public class EventActivity extends AppCompatActivity {
         categoryTextView.setText(event.getCategoryString());
 
         nameTextView = (TextView) findViewById(R.id.event_name);
-        nameTextView.setText(event.formatName());
+        nameTextView.setText(event.getName());
 
         distanceTextView = (TextView) findViewById(R.id.event_distance);
         float distance = Float.parseFloat(event.getDistance()) / 1000;
@@ -107,7 +113,10 @@ public class EventActivity extends AppCompatActivity {
 //        });
 //
         descriptionTextView = (TextView) findViewById(R.id.event_description);
-        descriptionTextView.setText(event.getDescription());
+        String description = event.getDescription();
+        // TEMPORARY: just to check scrollView behaviour inside Activity
+        String extralong = description + description + description;
+        descriptionTextView.setText(extralong);
 
         // Only get the time, not the date
         timeTextView = (TextView) findViewById(R.id.event_time);
