@@ -50,14 +50,6 @@ public class EventActivity extends AppCompatActivity {
             getWindow().setEnterTransition(new Fade());
         }
 
-        setContentView(R.layout.activity_event);
-
-        // allow transitions if API is Lollipop or above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setExitTransition(new Fade());
-            getWindow().setEnterTransition(new Fade());
-        }
-
         setContentView(R.layout.activity_event_polished);
 
         this.context = getApplicationContext();
